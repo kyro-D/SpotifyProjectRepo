@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<Title>Kyle's Playlist project: Top Artists Page</Title>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css"> </style>
+</head>
+
+<body>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+
+    <h1>Main Menu</h1>
+
+    <a class="btn btn-default" id="top-artists-longterm-button" >Top Artists Long Term</a>
+    <a class="btn btn-default" id="top-artists-mediumterm-button" >Top Artists Medium Term</a>
+    <a class="btn btn-default" id="top-artists-shortterm-button" >Top Artists Short Term</a>
+
+    <a class="btn btn-default" id="top-tracks-longterm-button">Top Tracks Long Term</a>
+    <a class="btn btn-default" id="top-tracks-mediumterm-button">Top Tracks Medium Term</a>
+    <a class="btn btn-default" id="top-tracks-shortterm-button">Top Tracks Short Term</a>
+
+    <!-- <button onclick="window.location.href = '';">Link</button> -->
+
+
+    <script type="text/javascript">
+        var topArtistLong = document.getElementById("top-artists-longterm-button");
+        var topTracksMed = document.getElementById("top-tracks-mediumterm-button");
+        var topTracksLong = document.getElementById("top-tracks-longterm-button");
+
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        var access_token = urlParams.get('access_token');
+        var refresh_token = urlParams.get('refresh_token');
+
+
+        // topArtistLong.addEventListener('click', function(){
+        //     console.log("Clicking the button")
+
+
+        //     $.get("/playlistRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+'&offset=0')
+
+        // })
+        document.getElementById("top-artists-longterm-button").href = "/userTopArtistRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=long_term"
+
+        document.getElementById("top-artists-mediumterm-button").href = "/userTopArtistRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=medium_term"
+        document.getElementById("top-artists-shortterm-button").href = "/userTopArtistRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=short_term"
+
+        document.getElementById("top-tracks-longterm-button").href = "/userTopTracksRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=long_term"
+
+        document.getElementById("top-tracks-mediumterm-button").href = "/userTopTracksRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=medium_term"
+
+        document.getElementById("top-tracks-shortterm-button").href = "/userTopTracksRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=short_term"
+
+
+        
+
+    </script>
+    
+
+    
+</body>
+
+</html>

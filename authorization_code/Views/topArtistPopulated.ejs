@@ -1,0 +1,370 @@
+<!doctype html>
+<html>
+<head>
+<Title>Kyle's Playlist project: Top Artists Page (Populated)</Title>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css"> </style>
+</head>
+
+<body>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+<script type="text/javascript">
+  /**
+         * Obtains parameters from the hash of the URL
+         * @return Object
+         */
+        // function getHashParams() {
+        //   var hashParams = {};
+        //   var e, r = /([^&;=]+)=?([^&;]*)/g,
+        //       q = window.location.hash.substring(1);
+        //   while ( e = r.exec(q)) {
+        //      hashParams[e[1]] = decodeURIComponent(e[2]);
+        //   }
+        //   return hashParams;
+        // }
+        
+  
+</script>
+
+
+    <h1>Top artist Page</h1>
+    <table id="top-Artists-Table"></table>
+    <button class="btn btn-default" id="obtain-user-top-artists">Obtain User's Top Artist Info</button>
+    <div id="navigation-buttons-container">
+      <button class="btn btn-default" id="next-button"> Next</button>
+      <button class="btn btn-default" id="prev-button"> Previous</button>
+    </div>
+
+    <script type="text/javascript">
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('access_token');
+      var access_token=myParam
+      var refresh_token = urlParams.get('refresh_token');
+      var offset = urlParams.get('offset')
+
+      if (offset == undefined){
+        offset = 0;
+      }
+      
+      console.log('access_token');
+      console.log(access_token);
+      //console.log(parameters);
+      // console.log(window.location)
+
+      //hide the previous and next buttons will unhide them in the obtain top artist function
+      $(document).ready(function(){
+        //wait till document is ready before manipulating with jQuery
+        $("#navigation-buttons-container").hide()
+      });
+
+
+      function buildTopArtistTable(data){
+        var numItemsPerRow = 3;
+        var count = 0;
+        var table = document.createElement("Table");
+        var offset = data.offset;
+        
+        var totalTopArtists = data.total;
+        var topArtistsArr = data.items;
+        var topAtristsArrLength = topArtistsArr.length;
+        var offset = data.offset;
+        var next = data.next;
+        var previous = data.previous;
+        //variables below are set for each artist inside the loop
+        var external_urls 
+        var genres
+        var spotifyArtistId
+        var artistHref
+        var artistImages
+        var artistName
+        var artistPopularity
+            
+        
+        //TODO make helper functions for populating the table
+
+        for (var i = 0; i<topAtristsArrLength;i++){
+
+          var row = table.insertRow();
+
+
+
+
+          
+          artistImages = topArtistsArr[i].images;
+          var artistImageElement = document.createElement("IMG");
+          artistImageElement.height = artistImages[1].height;
+          artistImageElement.width = artistImages[1].width;
+          artistImageElement.src = artistImages[1].url;
+
+          var imageCell = row.insertCell();
+          imageCell.style.padding = "25px"
+
+            
+          imageCell.appendChild(artistImageElement);
+
+
+          var numberCell = row.insertCell();
+          var numberString = i+1+offset;
+          numberString = numberString+")"
+          numberCell.innerHTML = numberString;
+          
+          //give the cell some padding to make it more readable
+          numberCell.style.padding = "10px";
+
+          var artistNameCell = row.insertCell();
+          artistNameCell.innerHTML = topArtistsArr[i].name;
+          artistNameCell.style.padding = "10px";
+
+          var genereCaptionCell = row.insertCell();
+          genereCaptionCell.innerHTML = "Genres: "
+
+
+          genres = topArtistsArr[i].genres;
+          var genreString = "";
+          for (var j = 0; j<genres.length;j++){
+            if (j == genres.length-1){
+              genreString += "& "
+            }
+
+            genreString += genres[j];
+
+            if (j<genres.length-1){
+              genreString += ", "
+            }
+
+            
+
+          }
+          var genreCell = row.insertCell();
+          genreCell.innerHTML = genreString;
+          genreCell.style.padding = "10px";
+
+
+          var artistHrefCell = row.insertCell();
+          artistHref = topArtistsArr[i].href;
+          artistHrefCell.innerHTML = "Artist HREF "+artistHref;
+          artistHrefCell.style.padding = "10px";
+
+          var artistIdCell = row.insertCell();
+          spotifyArtistId = topArtistsArr[i].id;
+          artistIdCell.innerHTML = "Spotify Artist ID " +spotifyArtistId;
+          artistIdCell.style.padding = "10px";
+
+          var artistExternalUrlCell = row.insertCell();
+
+          var artistUrlATag = document.createElement("A");
+          external_urls = topArtistsArr[i].external_urls.spotify;
+          artistUrlATag.href = external_urls
+          artistUrlATag.text = "Their Spotify Main Page";
+          
+          artistExternalUrlCell.appendChild(artistUrlATag);
+          artistExternalUrlCell.style.padding = "10px";
+
+          var artistPopularityCell = row.insertCell();
+          artistPopularity = topArtistsArr[i].popularity;
+          artistPopularityCell.innerHTML = "Popularity Rating (0-100): " + artistPopularity;
+
+
+
+
+          
+
+          
+          
+
+          
+
+
+          table.appendChild(row);
+          
+          
+
+
+        }
+
+        return table;
+
+      }
+      
+      
+      
+      document.getElementById("obtain-user-top-artists").addEventListener('click', function() {
+        
+
+       var urlString = '/userTop?access_token='+access_token
+
+        //same as above just changing the timerange of the top info 
+        $.ajax({
+          //url:'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
+          url:urlString,
+          headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+          json: true,
+          success: function(data){
+              
+              console.log('Making the table');
+              console.log(data);
+              var artistTable = buildTopArtistTable(data);
+
+
+              //Show the navigation buttons
+              $("#navigation-buttons-container").show();
+              var nextButton = document.getElementById("next-button");
+              
+              document.getElementById("top-Artists-Table").appendChild(artistTable);
+              // nextButton.addEventListener('click', function() {
+
+              //   $.ajax({
+              //     url:data.next,
+              //     headers: {
+              //       'Authorization': 'Bearer ' + access_token
+              //     },
+              //     json: true,
+              //     success: function(data1){
+              //       console.log('Next button success');
+              //       console.log(data1);
+              //       var nextArtistTable = buildTopArtistTable(data1);
+              //       //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
+
+              //       console.log(document.getElementById("top-Artists-Table").childNodes);
+              //       var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+                    // document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
+
+
+
+                    // var prevButton = document.getElementById("prev-button");
+                    // prevButton.addEventListener('click', function(){
+
+                      
+
+                    //     $.ajax({
+                    //       url:data1.previous,
+                    //       headers: {
+                    //         'Authorization': 'Bearer ' + access_token
+                    //       },
+                    //       json: true,
+                    //       success: function(data2){
+                    //         console.log('Previous button success');
+                    //         console.log(data2);
+                    //         var nextArtistTable = buildTopArtistTable(data2);
+                    //         //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
+
+                    //         console.log(document.getElementById("top-Artists-Table").childNodes);
+                    //         var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+                    //         document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
+
+
+
+                    //       }
+                    //     })
+                      
+
+                    // })
+
+
+
+                    // var nextButton = document.getElementById("next-button");
+                    // nextButton.addEventListener('click', function(){
+
+                      
+
+                    //     $.ajax({
+                    //       url:data1.next,
+                    //       headers: {
+                    //         'Authorization': 'Bearer ' + access_token
+                    //       },
+                    //       json: true,
+                    //       success: function(data3){
+                    //         console.log('Previous button success');
+                    //         console.log(data3);
+                    //         var nextArtistTable = buildTopArtistTable(data);
+                    //         //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
+
+                    //         console.log(document.getElementById("top-Artists-Table").childNodes);
+                    //         var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+                    //         document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
+
+
+
+                    //       }
+                    //     })
+                
+
+                    // })
+
+
+
+                  // }
+                
+              
+
+              // var prevButton = document.getElementById("prev-button");
+              // prevButton.addEventListener('click', function(){
+
+                
+
+              //     $.ajax({
+              //       url:data.previous,
+              //       headers: {
+              //         'Authorization': 'Bearer ' + access_token
+              //       },
+              //       json: true,
+              //       success: function(data){
+              //         console.log('Previous button success');
+              //         console.log(data);
+              //         var nextArtistTable = buildTopArtistTable(data);
+              //         //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
+
+              //         console.log(document.getElementById("top-Artists-Table").childNodes);
+              //         var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+              //         document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
+
+
+
+              //       }
+              //     })
+                
+
+              // })
+
+          }
+
+        });
+        });
+
+      var nextButton = document.getElementById("next-button");
+      nextButton.addEventListener('click', function() {
+        console.log(document)
+        var urlString = '/userTop?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset
+
+        $.ajax({
+          url:'',
+          headers: {
+            'Authorization': 'Bearer ' + access_token
+          },
+          json: true,
+          success: function(data1){
+            console.log('Next button success');
+            console.log(data1);
+            var nextArtistTable = buildTopArtistTable(data1);
+            //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
+
+            console.log(document.getElementById("top-Artists-Table").childNodes);
+            var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+            document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
+
+
+
+          }
+        })
+      })
+
+
+    </script>
+
+
+</body>
+
+</html>

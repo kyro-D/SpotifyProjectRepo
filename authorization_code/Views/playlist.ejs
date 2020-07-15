@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+<head>
+<Title>Kyle's Playlist project: Playlist Page</Title>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css"> </style>
+</head>
+
+<body>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+<script type="text/javascript">
+          console.log('in the new page');
+  
+</script>
+
+<script id="user-profile-template" type="text/x-handlebars-template">
+      <!-- <h1>Playlist name: {{pl_name}}</h1> -->
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object" width="150" src="{{images.0.url}}" />
+        </div>
+        <div class="media-body">
+          <dl class="dl-horizontal">
+            <!-- for (var i = 0;i<playlistTotal;i++){
+
+
+            } -->
+            
+            <!-- <dt>Track 1</dt><dd>{{playlistListing[i].name}}</dd> -->
+            <!-- <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+            <dt>Country</dt><dd>{{country}}</dd>
+            <dt>Type</dt><dd>{{type}}</dd>
+            <dt>Subcription Status</dt><dd>{{product}}</dd> -->
+          </dl>
+        </div>
+      </div>
+
+
+    </script>
+
+    <table id="top-Artists-Table"></table>
+    <button class="btn btn-default" id="obtain-user-top-artists">Obtain User's Top Artist Info</button>
+    <div id="navigation-buttons-container">
+      <button class="btn btn-default" id="next-button"> Next</button>
+      <button class="btn btn-default" id="prev-button"> Previous</button>
+    </div>
+
+    <script type="text/javascript">
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get('access_token');
+      access_token=myParam
+      //var parameters=getHashParams();
+      //var access_token=parameters.access_token
+      console.log('access_token');
+      console.log(access_token);
+      //console.log(parameters);
+      console.log(window.location)
+
+      //hide the previous and next buttons will unhide them in the obtain top artist function
+      $(document).ready(function(){
+        //wait till document is ready before manipulating with jQuery
+        $("#navigation-buttons-container").hide()
+      });
+      
+      
+      
+      document.getElementById("obtain-user-top-artists").addEventListener('click', function() {
+        
+
+
+        //same as above just changing the timerange of the top info 
+        $.ajax({
+          url:'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
+          headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+          json: true,
+          success: function(data){
+            //Render the data to the front end
+            console.log('Retreived data')
+            console.log(data)
+
+            //fill out info into the browser. 
+            
+            var numItemsPerRow = 3;
+            var count = 0;
+            var table = document.createElement("Table");
+            
+            var totalTopArtists = data.total;
+            var topArtistsArr = data.items;
+            var topAtristsArrLength = topArtistsArr.length;
+            var offset = data.offset;
+            var next = data.next;
+            var previous = data.previous;
+            //variables below are set for each artist inside the loop
+            var external_urls 
+            var genres
+            var spotifyArtistId
+            var artistHref
+            var artistImages
+            var artistName
+            var artistPopularity
+                    
+                
+                //TODO make helper functions for populating the table
+
+                for (var i = 0; i<topAtristsArrLength;i++){
+
+                  var row = table.insertRow();
+
+
+
+
+                  
+                  artistImages = topArtistsArr[i].images;
+                  var artistImageElement = document.createElement("IMG");
+                  artistImageElement.height = artistImages[1].height;
+                  artistImageElement.width = artistImages[1].width;
+                  artistImageElement.src = artistImages[1].url;
+
+                  var imageCell = row.insertCell();
+                  imageCell.style.padding = "25px"
+
+                    
+                  imageCell.appendChild(artistImageElement);
+
+
+                  var numberCell = row.insertCell();
+                  var numberString = i+1;
+                  numberString = numberString+")"
+                  numberCell.innerHTML = numberString;
+                  
+                  //give the cell some padding to make it more readable
+                  numberCell.style.padding = "10px";
+
+                  var artistNameCell = row.insertCell();
+                  artistNameCell.innerHTML = topArtistsArr[i].name;
+                  artistNameCell.style.padding = "10px";
+
+                  var genereCaptionCell = row.insertCell();
+                  genereCaptionCell.innerHTML = "Genres: "
+
+
+                  genres = topArtistsArr[i].genres;
+                  var genreString = "";
+                  for (var j = 0; j<genres.length;j++){
+                    if (j == genres.length-1){
+                      genreString += "& "
+                    }
+
+                    genreString += genres[j];
+
+                    if (j<genres.length-1){
+                      genreString += ", "
+                    }
+
+                    
+
+                  }
+                  var genreCell = row.insertCell();
+                  genreCell.innerHTML = genreString;
+                  genreCell.style.padding = "10px";
+
+
+                  var artistHrefCell = row.insertCell();
+                  artistHref = topArtistsArr[i].href;
+                  artistHrefCell.innerHTML = "Artist HREF "+artistHref;
+                  artistHrefCell.style.padding = "10px";
+
+                  var artistIdCell = row.insertCell();
+                  spotifyArtistId = topArtistsArr[i].id;
+                  artistIdCell.innerHTML = "Spotify Artist ID " +spotifyArtistId;
+                  artistIdCell.style.padding = "10px";
+
+                  var artistExternalUrlCell = row.insertCell();
+
+                  var artistUrlATag = document.createElement("A");
+                  external_urls = topArtistsArr[i].external_urls.spotify;
+                  artistUrlATag.href = external_urls
+                  artistUrlATag.text = "Their Spotify Main Page";
+                  
+                  artistExternalUrlCell.appendChild(artistUrlATag);
+                  artistExternalUrlCell.style.padding = "10px";
+
+                  var artistPopularityCell = row.insertCell();
+                  artistPopularity = topArtistsArr[i].popularity;
+                  artistPopularityCell.innerHTML = "Popularity Rating (0-100): " + artistPopularity;
+
+
+
+
+                  
+
+                  
+                  
+
+                  
+
+
+                  table.appendChild(row);
+                  
+                  
+
+
+                }
+
+              console.log('Making the table');
+
+              //Show the navigation buttons
+              $("#navigation-buttons-container").show();
+              var nextButton = document.getElementById("next-button");
+              document.getElementById("top-Artists-Table").appendChild(table);
+              // document.getElementById("next-button").addEventListener('click', function() {
+
+              //   $.ajax({
+              //     url:'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
+              //     headers: {
+              //       'Authorization': 'Bearer ' + access_token
+              //     },
+              //   json: true,
+              //   success: function(data){
+
+
+              //   }
+
+
+
+
+
+
+          }
+
+        });
+
+
+      });
+    </script>
+
+
+</body>
+
+</html>

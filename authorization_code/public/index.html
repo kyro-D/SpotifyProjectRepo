@@ -1,0 +1,452 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Example of the Authorization Code flow with Spotify</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css">
+      #login, #loggedin {
+        display: none;
+      }
+      .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 500px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+
+  
+    <div class="container">
+      <div id="login">
+        <h1>This is an example of the Authorization Code flow</h1>
+        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
+      </div>
+      <div id="loggedin">
+        <div id="user-profile">
+        </div>
+        <div id="oauth">
+        </div>
+        <table id="kyle-playlist-listing">
+        </table>
+        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <button class="btn btn-default" id="obtain-user-playlists">Obtain User's Playlists</button>
+        <button class="btn btn-default" id="list-playlist-tracks"> List playlist tracks </button>
+        <button id="obtain-user-top-artists"> Get top artists</button>
+        <a id="menu-link" href="/mainmenu">Main Menu</a>
+      </div>
+    </div>
+
+    <script id="user-profile-template" type="text/x-handlebars-template">
+      <h1>Logged in as {{display_name}}</h1>
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object" width="150" src="{{images.0.url}}" />
+        </div>
+        <div class="media-body">
+          <dl class="dl-horizontal">
+            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
+            <dt>Id</dt><dd>{{id}}</dd>
+            <dt>Email</dt><dd>{{email}}</dd>
+            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+            <dt>Country</dt><dd>{{country}}</dd>
+            <dt>Type</dt><dd>{{type}}</dd>
+            <dt>Subcription Status</dt><dd>{{product}}</dd>
+          </dl>
+        </div>
+      </div>
+    </script>
+    
+
+    
+
+
+    <script id="oauth-template" type="text/x-handlebars-template">
+      <h2>oAuth info</h2>
+      <dl class="dl-horizontal">
+        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
+        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+      </dl>
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script>
+      (function() {
+
+        /**
+         * Obtains parameters from the hash of the URL
+         * @return Object
+         */
+        function getHashParams() {
+          var hashParams = {};
+          var e, r = /([^&;=]+)=?([^&;]*)/g,
+              q = window.location.hash.substring(1);
+          while ( e = r.exec(q)) {
+             hashParams[e[1]] = decodeURIComponent(e[2]);
+          }
+          return hashParams;
+        }
+
+        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+            userProfileTemplate = Handlebars.compile(userProfileSource),
+            userProfilePlaceholder = document.getElementById('user-profile');
+
+        var oauthSource = document.getElementById('oauth-template').innerHTML,
+            oauthTemplate = Handlebars.compile(oauthSource),
+            oauthPlaceholder = document.getElementById('oauth');
+
+        var params = getHashParams();
+
+        var access_token = params.access_token,
+            refresh_token = params.refresh_token,
+            error = params.error;
+
+        
+
+        if (error) {
+          alert('There was an error during the authentication');
+        } else {
+          if (access_token) {
+            // render oauth info
+            oauthPlaceholder.innerHTML = oauthTemplate({
+              access_token: access_token,
+              refresh_token: refresh_token
+            });
+
+            $.ajax({
+                url: 'https://api.spotify.com/v1/me',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                  //JQuery to selectivly hide the HTML elements Login and loggedin
+                  $('#login').hide();
+                  $('#loggedin').show();
+                  $('#menu-link').show();
+                }
+            });
+          } else {
+              // render initial screen
+              $('#login').show();
+              $('#loggedin').hide();
+              $('#menu-link').hide();
+          }
+
+          document.getElementById('obtain-new-token').addEventListener('click', function() {
+            $.ajax({
+              url: '/refresh_token',
+              data: {
+                'refresh_token': refresh_token
+              }
+            }).done(function(data) {
+              access_token = data.access_token;
+              oauthPlaceholder.innerHTML = oauthTemplate({
+                access_token: access_token,
+                refresh_token: refresh_token
+              });
+            });
+          }, false);
+
+
+          document.getElementById('obtain-user-playlists').addEventListener('click', function() {
+            $.ajax({
+              url: '/playlist',
+              data: {
+                  'access_token': access_token
+
+                },
+              dataType:'json',
+              success: function(data){
+                console.log('success on')
+                //data has the JSON of the playlist listing returned from Spotify's API
+                //console.log(data)
+                //console.log(data.playlistTotal)
+                //console.log(data.playlists)
+                console.log(data)
+                console.log(data.playlistTotal)
+                console.log(data.playlists)
+                var playlistListing = data.playlists
+                var playlistTotal = data.playlistTotal
+                var playlistArrayLength=playlistListing.length
+                console.log(playlistListing)
+
+                //console.log(data.playlists[0].name)
+                //console.log(playlistListing[0])
+
+                
+
+                //used to change number of cells in a table
+                var numItemsPerRow = 3,
+                    count = 0,
+                    table = document.createElement("Table"),
+                    row = table.insertRow();
+                    var emptyRow = table.insertRow();
+                
+
+
+                for (var i = 0; i<playlistArrayLength;i++){
+
+                  var cell = row.insertCell();
+                  cell.innerHTML = playlistListing[i].name;
+                  //give the cell some padding to make it more readable
+                  cell.style.padding = "20px";
+
+                  // var emptyCell=row.insertCell();
+                  // emptyCell.width="10px";
+                  var playlistId = playlistListing[i].id;
+
+
+                  //TODO render the buttons to have a function to click event listener. 
+                  //This listener will then use the name of the playlist to check for the href of it. Then
+                  //GET to the playlistContents to have it reneder the songs.  
+                  //var button = document.createElement("button");
+                  //var buttonUrl = '/playlistContents?'+
+
+                  //button.formAction = '/playlistContents'
+
+
+
+                  cell.addEventListener("click", function(playlistId){
+                             alert("Foo");
+                  });
+
+                  count++;
+                  //If the remainder is Zero make a new row
+                  if (count%numItemsPerRow==0){
+                    row = table.insertRow();
+                    table.append(emptyRow)
+
+                  }
+                  table.appendChild(row)
+
+                }
+
+                  //Don't render it again if it is already renedered
+                  //if (document.getElementById("kyle-playlist-listing").innerHTML == null ){
+                    console.log('Table variable below this')
+                    console.log(table)
+                    console.log("Making the table")
+                    document.getElementById("kyle-playlist-listing").appendChild(table)
+                    document.getElementById("kyle-playlist-listing").style.cellspacing = "50px";
+                    document.getElementById("kyle-playlist-listing").style.cellpadding="300px"
+                    document.getElementById("kyle-playlist-listing").border="3px"
+                    //}
+                  //console.log("kyle-playlist-listing inner html")
+                  //console.log("[",document.getElementById("kyle-playlist-listing").innerHTML,"]")
+
+                  //$('#table').style.cellpadding = "50px 10px 20px 30px";
+
+
+
+
+                
+
+
+
+
+              }
+
+            
+              
+
+
+
+            });
+          }, false);
+
+          document.getElementById("obtain-user-top-artists").addEventListener('click', function() {
+
+            $.ajax({
+              //url:'https://api.spotify.com/v1/me/top/tracks?time_range=short_term',
+              url:'https://api.spotify.com/v1/me/top/tracks?limit=20&offset=40&time_range=short_term',
+              headers: {
+                      'Authorization': 'Bearer ' + access_token
+                    },
+              json: true,
+              success: function(data){
+                //Render the data to the front end
+                console.log('Retreived data')
+                console.log(data)  
+              }
+
+          });
+
+
+      });
+
+          // document.getElementById('list-playlist-tracks').addEventListener('click', function(){
+          //   $.ajax({
+          //     url: '/playlistRenderPage',
+          //     data:{
+
+          //           'access_token': access_token,
+          //           'plId': '4tYpWy1PU7PtDxDxB05rzH'
+          //     }, 
+          //     dataType: 'json',
+          //     success: function(data){
+
+          //       console.log('success BABYYY');
+          //       console.log(data);
+
+          //       // TODO Create a List of all the songs.
+          //       var tracks = document.createElement("text");
+          //       tracksString = data.tracks.items[0].track.name + data.tracks.items[1].track.name;
+          //       tracks.innerHTML = tracksString;
+          //       document.getElementById("kyle-playlist-listing").appendChild(tracks)
+
+
+
+
+          //       //TODO Play the songs
+          //     }
+
+
+          //   });
+
+
+          // }, false);
+
+
+
+          //use jquery to get results. Chaning it to be link to new web page. 
+          // document.getElementById('list-playlist-tracks').addEventListener('click', function(){
+          //   $.get({
+          //     url: '/playlistRenderPage',
+          //     data:{
+
+          //           'access_token': access_token,
+          //           'plId': '4tYpWy1PU7PtDxDxB05rzH'
+          //     }, 
+          //     dataType: 'json',
+          //     success: function(data){
+
+          //       console.log('success BABYYY');
+          //       console.log(data);
+
+          //       // TODO Create a List of all the songs.
+          //       var tracks = document.createElement("text");
+          //       tracksString = data.tracks.items[0].track.name + data.tracks.items[1].track.name;
+          //       tracks.innerHTML = tracksString;
+          //       document.getElementById("kyle-playlist-listing").appendChild(tracks)
+
+
+
+
+          //       //TODO Play the songs
+          //     }
+
+
+          //   });
+
+
+          // }, false);
+
+          // var plalistTagTest = document.getElementById('list-playlist-tracks');
+          // var bindingUrlTest = "http://localhost:8888/playlistRenderPage"
+          // var tokenArguments.stringify({access_token: access_token,
+          //   refresh_token: refresh_token}) 
+          // plalistTagTest.innerHTML=access_token
+          //this doesn't work because stringify is an object only in scope for the server. 
+
+        }
+
+
+
+
+      })();
+
+
+    </script>
+    
+
+      
+
+
+    
+    <script type="text/javascript">
+    // 
+      //script to display warning if user selects the a tag without signing in first
+      function getHashParams() {
+          var hashParams = {};
+          var e, r = /([^&;=]+)=?([^&;]*)/g,
+              q = window.location.hash.substring(1);
+          while ( e = r.exec(q)) {
+             hashParams[e[1]] = decodeURIComponent(e[2]);
+          }
+          return hashParams;
+        }
+      console.log('About to run the empty token check');
+      
+      function validateTokens(){
+        console.log('Validating tokens')
+        var paramsKyle = getHashParams();
+        console.log(paramsKyle.tokenErr)
+        console.log(paramsKyle)
+        console.log(paramsKyle.access_token)
+        console.log(paramsKyle.refresh_token)
+        if (paramsKyle.tokenErr !== undefined){
+
+            var noTokenErr = paramsKyle.tokenErr;
+            console.log(noTokenErr);
+            if (noTokenErr == "missingAccessToken"){
+              alert('Must sign in and retrieve access token first');
+              console.log('Tried to run the alert');
+            }
+            
+        }
+        //Else verify the access and refresh tokens have data in them and append them to the link 
+        else if (paramsKyle.access_token !== undefined || paramsKyle.refresh_token !== undefined){
+          document.getElementById("menu-link").href="/mainmenu?access_token="+paramsKyle.access_token+"&refresh_token="+paramsKyle.refresh_token+'&offset=0'
+        }
+
+      }
+
+      validateTokens();
+
+
+
+
+
+      // document.getElementById("obtain-user-top-artists").addEventListener('click', function() {
+
+      //   $.ajax({
+      //     url:'https://api.spotify.com/v1/me/top/artists',
+      //     headers: {
+      //             'Authorization': 'Bearer ' + access_token
+      //           },
+      //     json: true,
+      //     success: function(data){
+      //       //Render the data to the front end
+      //       console.log('Retreived data')
+      //       console.log(data)  
+      //     }
+
+      //   });
+
+
+      // });
+      
+      
+
+      
+      
+    
+    </script>
+
+
+
+
+
+
+    
+    
+  </body>
+</html>
+
