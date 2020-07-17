@@ -13,5 +13,9 @@
     "querystring": "~0.2.0",
     "request": "~2.83.0"
   },
-  "license": "License used utlined in spotify developer agreement"
+  "license": "License used utlined in spotify developer agreement",
+
+  "scripts": {
+    "start": "app.js"
+}
 }
