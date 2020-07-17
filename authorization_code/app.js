@@ -21,6 +21,7 @@ require('dotenv').config({path:"../kyleproject.env"});
 //Client ID and secret for Heroku to access
 var client_id = process.env.SpotifyClientId;
 var client_secret = process.env.SpotifyClinetSecret;
+var port = process.env.PORT;
 
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
@@ -689,7 +690,7 @@ app.get('/userTopTracksPrev', function(req,res,body){
 
 
 
-console.log('Listening on '+process.env.PORT);
-app.listen(process.env.PORT);
+console.log('Listening on '+port);
+app.listen(port);
 
-console.log(process.env.HOST);
+//console.log(process.env.HOST);
