@@ -13,10 +13,11 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-require('dotenv').config({path:"../kyleproject.env"});
+//require('dotenv').config({path:"../kyleproject.env"});
 
 //var client_id = process.env.SPOTIFYCLIENTID; // Your client id
 //var client_secret = process.env.SPOTIFYCLIENTSECRET; // Your secret
+//var port = process.env.PORT;
 
 //Client ID and secret for Heroku to access
 var client_id = process.env.SpotifyClientId;
@@ -687,6 +688,7 @@ app.get('/userTopTracksPrev', function(req,res,body){
   }
 
 })
+
 
 
 
