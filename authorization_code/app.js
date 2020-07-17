@@ -15,8 +15,13 @@ var cookieParser = require('cookie-parser');
 
 require('dotenv').config({path:"../kyleproject.env"});
 
-var client_id = process.env.SPOTIFYCLIENTID; // Your client id
-var client_secret = process.env.SPOTIFYCLIENTSECRET; // Your secret
+//var client_id = process.env.SPOTIFYCLIENTID; // Your client id
+//var client_secret = process.env.SPOTIFYCLIENTSECRET; // Your secret
+
+//Client ID and secret for Heroku to access
+var client_id = process.env.SpotifyClientId;
+var client_secret = process.env.SpotifyClinetSecret;
+
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 
