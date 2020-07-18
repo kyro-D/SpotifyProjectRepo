@@ -51,7 +51,7 @@ var app = express();
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
-//app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
 //var playlist = require('playlist');
 //var path = 'Macintosh HD⁩/Users⁩/kylerose⁩/Documents⁩/PlaylistProject⁩/SpotifyTutorial⁩/web-api-auth-examples⁩/⁨authorization_code⁩';
