@@ -22,9 +22,11 @@ var cookieParser = require('cookie-parser');
 var client_id = process.env.SpotifyClientId;
 var client_secret = process.env.SpotifyClinetSecret;
 var port = process.env.PORT;
+var host = process.env.HOST
 
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
-
+//var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+//change redirect URI to be compatiable with heroku server (IE not local host)
+var redirect_uri = 'https://'+host+'/callback';
 
 /**
  * Generates a random string containing numbers and letters
