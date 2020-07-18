@@ -238,19 +238,7 @@
                     document.getElementById("kyle-playlist-listing").style.cellspacing = "50px";
                     document.getElementById("kyle-playlist-listing").style.cellpadding="300px"
                     document.getElementById("kyle-playlist-listing").border="3px"
-                    //}
-                  //console.log("kyle-playlist-listing inner html")
-                  //console.log("[",document.getElementById("kyle-playlist-listing").innerHTML,"]")
-
-                  //$('#table').style.cellpadding = "50px 10px 20px 30px";
-
-
-
-
-                
-
-
-
+                    
 
               }
 
@@ -277,84 +265,10 @@
                 console.log(data)  
               }
 
+            });
+
+
           });
-
-
-      });
-
-          // document.getElementById('list-playlist-tracks').addEventListener('click', function(){
-          //   $.ajax({
-          //     url: '/playlistRenderPage',
-          //     data:{
-
-          //           'access_token': access_token,
-          //           'plId': '4tYpWy1PU7PtDxDxB05rzH'
-          //     }, 
-          //     dataType: 'json',
-          //     success: function(data){
-
-          //       console.log('success BABYYY');
-          //       console.log(data);
-
-          //       // TODO Create a List of all the songs.
-          //       var tracks = document.createElement("text");
-          //       tracksString = data.tracks.items[0].track.name + data.tracks.items[1].track.name;
-          //       tracks.innerHTML = tracksString;
-          //       document.getElementById("kyle-playlist-listing").appendChild(tracks)
-
-
-
-
-          //       //TODO Play the songs
-          //     }
-
-
-          //   });
-
-
-          // }, false);
-
-
-
-          //use jquery to get results. Chaning it to be link to new web page. 
-          // document.getElementById('list-playlist-tracks').addEventListener('click', function(){
-          //   $.get({
-          //     url: '/playlistRenderPage',
-          //     data:{
-
-          //           'access_token': access_token,
-          //           'plId': '4tYpWy1PU7PtDxDxB05rzH'
-          //     }, 
-          //     dataType: 'json',
-          //     success: function(data){
-
-          //       console.log('success BABYYY');
-          //       console.log(data);
-
-          //       // TODO Create a List of all the songs.
-          //       var tracks = document.createElement("text");
-          //       tracksString = data.tracks.items[0].track.name + data.tracks.items[1].track.name;
-          //       tracks.innerHTML = tracksString;
-          //       document.getElementById("kyle-playlist-listing").appendChild(tracks)
-
-
-
-
-          //       //TODO Play the songs
-          //     }
-
-
-          //   });
-
-
-          // }, false);
-
-          // var plalistTagTest = document.getElementById('list-playlist-tracks');
-          // var bindingUrlTest = "http://localhost:8888/playlistRenderPage"
-          // var tokenArguments.stringify({access_token: access_token,
-          //   refresh_token: refresh_token}) 
-          // plalistTagTest.innerHTML=access_token
-          //this doesn't work because stringify is an object only in scope for the server. 
 
         }
 
