@@ -53,7 +53,8 @@ app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 //app.set('views', __dirname + '/views');
-app.set('views', path.join(__dirname, 'views')) //heroku uses ubuntu servers. NEed to set folder like this?
+//capitalize V for directory name because linux respects capital letters.
+app.set('views', path.join(__dirname, 'Views')) //heroku uses ubuntu servers. NEed to set folder like this?
 app.set('view engine', 'ejs');
 //var playlist = require('playlist');
 //var path = 'Macintosh HD⁩/Users⁩/kylerose⁩/Documents⁩/PlaylistProject⁩/SpotifyTutorial⁩/web-api-auth-examples⁩/⁨authorization_code⁩';
