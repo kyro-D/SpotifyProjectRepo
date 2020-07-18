@@ -26,7 +26,7 @@ var host = process.env.HOST
 
 //var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 //change redirect URI to be compatiable with heroku server (IE not local host)
-var redirect_uri = 'https://'+host+'/callback';
+var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback';
 
 /**
  * Generates a random string containing numbers and letters
