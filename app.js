@@ -118,7 +118,7 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          //console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -260,10 +260,10 @@ app.get('/playlistRenderPage', function(req,res,body){
   //var access_token = req
   //var refresh_token = req
 
-  console.log('The tokens your highness');
-  console.log(access_token)
-  console.log(refresh_token)
-  console.log(req.query)
+  //console.log('The tokens your highness');
+  //console.log(access_token)
+  //console.log(refresh_token)
+  //console.log(req.query)
 
 
 
@@ -482,6 +482,7 @@ app.get('/userTopArtistPrev', function(req,res,body){
 })
 
 app.get('/mainmenu', function(req,res,body){
+  console.log('In mainmenu route')
   if (req.query.refresh_token == undefined || req.query.access_token == undefined){
     console.log('Sending back to home page');
     res.redirect('/#tokenErr=missingAccessToken');
