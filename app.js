@@ -697,4 +697,4 @@ app.get('/userTopTracksPrev', function(req,res,body){
 console.log('Listening on '+ port);
 app.listen(port);
 
-console.log(process.env.HOST);
+// console.log(process.env.HOST);
