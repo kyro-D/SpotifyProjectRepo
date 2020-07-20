@@ -76,9 +76,6 @@
         var track_number
         var duration
          
-            
-        
-        //TODO make helper functions for populating the table
 
         for (var i = 0; i<topTracksArrLength;i++){
 
@@ -101,7 +98,10 @@
 
 
 
-
+          var numberCell = row.insertCell();
+          var numberString = i+1+offset;
+          numberString = numberString+")"
+          numberCell.innerHTML = numberString;
 
 
 
@@ -117,9 +117,20 @@
           var artistsCell = row.insertCell();
           artistObj = topTracksArr[i].artists
           artistNames = artistObj[0].name
+          var artistNamesStr
           //Todo loop through the array to concatenate all the artist names
 
-          artistsCell.innerHTML = artistNames
+          //artistsCell.innerHTML = artistNames
+          for (var j = 0; j<artistObj.length;j++){
+            if (j == artistObj.length-1){
+               artistNamesStr += "& "
+            }
+
+            artistNamesStr += artistObj[j];
+
+            if (j < artistObj.length-1){
+              artistNamesStr += ", "
+            }
 
 
 
