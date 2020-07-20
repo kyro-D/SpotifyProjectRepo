@@ -11,24 +11,6 @@
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script type="text/javascript">
-  /**
-         * Obtains parameters from the hash of the URL
-         * @return Object
-         */
-        // function getHashParams() {
-        //   var hashParams = {};
-        //   var e, r = /([^&;=]+)=?([^&;]*)/g,
-        //       q = window.location.hash.substring(1);
-        //   while ( e = r.exec(q)) {
-        //      hashParams[e[1]] = decodeURIComponent(e[2]);
-        //   }
-        //   return hashParams;
-        // }
-        console.log('in the new page');
-  
-</script>
-
 
     <h1>Top artist Page</h1>
     <table id="top-Artists-Table"></table>
@@ -51,15 +33,12 @@
         offset = 0;
       }
       
-      console.log('access_token');
-      console.log(access_token);
-      //console.log(parameters);
-      // console.log(window.location)
+     
 
       //hide the previous and next buttons will unhide them in the obtain top artist function
       $(document).ready(function(){
         //wait till document is ready before manipulating with jQuery
-        //$("#navigation-buttons-container").hide()
+        
         $("#next-button").hide()
         $("#prev-button").hide()
       });
@@ -87,7 +66,7 @@
         var artistPopularity
             
         
-        //TODO make helper functions for populating the table
+        
 
         for (var i = 0; i<topAtristsArrLength;i++){
 
@@ -200,7 +179,7 @@
 
        var urlString = '/userTopArtist?access_token='+access_token+'&offset=0'+'&time_range='+time_range
 
-        //same as above just changing the timerange of the top info 
+      
         $.ajax({
           
           url:urlString,
@@ -210,7 +189,7 @@
           json: true,
           success: function(data){
             var artistTable = buildTopArtistTable(data);
-            console.log(data)
+            
             if (data.total == 0){
               alert('No data available');
             }
@@ -247,14 +226,10 @@
 
       var nextButton = document.getElementById("next-button");
       nextButton.addEventListener('click', function(result,status,xhr) {
-        //console.log(document)
-        console.log(result)
-        console.log(status)
-        console.log(xhr)
+        
         offset += 20
         var urlString = '/userTopArtistNext?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset+'&time_range='+time_range
-        console.log('Next button URL string')
-        console.log(urlString)
+        
         $.ajax({
           url:urlString,
           headers: {
@@ -262,13 +237,7 @@
           },
           json: true,
           success: function(data){
-            console.log('Next button success');
-            console.log(data);
-
               var nextArtistTable = buildTopArtistTable(data);
-              //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
-
-              //console.log(document.getElementById("top-Artists-Table").childNodes);
               var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
               document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
 
@@ -293,14 +262,9 @@
 
       var prevButton = document.getElementById("prev-button");
       prevButton.addEventListener('click', function(result,status,xhr) {
-        //console.log(document)
-        //console.log(result)
-        //console.log(status)
-        //console.log(xhr)
         offset -= 20
         var urlString = '/userTopArtistPrev?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset+'&time_range='+time_range
-        console.log('Next button URL string')
-        console.log(urlString)
+    
         $.ajax({
           url:urlString,
           headers: {
@@ -308,13 +272,8 @@
           },
           json: true,
           success: function(data){
-            console.log('Next button success');
-            console.log(data);
 
               var previousArtistTable = buildTopArtistTable(data);
-              //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
-
-              //console.log(document.getElementById("top-Artists-Table").childNodes);
               var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
               document.getElementById("top-Artists-Table").replaceChild(previousArtistTable,existingTableNode);
 
@@ -335,105 +294,6 @@
           }
         })
       })
-
-
-
-      // $(document).ajaxSuccess(function(event,xhr,options){
-      //   //alert('Ran this after the ajax completed');
-      //   var nextButton = document.getElementById("next-button");
-      //   console.log('Successful AJAX request');
-      //   console.log(event);
-      //   //console.log(xhr); // this has the responseJSON property that I want to use to update the next and prev buttons 
-      //   //console.log(options);
-
-      //   //need to deleted old event listeners
-      //   //update the window's query parameters to update the offset variable
-      //   //
-
-      //   //check to make sure the property is defined 
-      //   if (xhr.responseJSON != undefined){
-      //     console.log('xhr is not empty');
-
-      //     console.log('Making the table');
-      //     var jsonData = xhr.responseJSON
-      //         //console.log(data);
-      //         var artistTable = buildTopArtistTable(jsonData);
-
-
-      //         //Show the navigation buttons
-      //         $("#navigation-buttons-container").show(); 
-      //         document.getElementById("top-Artists-Table").appendChild(artistTable);
-          
-      //     //
-      //     //Below doesn't work becuase the offset value isn't within it's scope
-      //     // urlParams.set('offset',)
-
-          
-
-      //     if (addedEventListenersToButtons = 1){
-      //       console.log('removing event listener')
-
-
-      //       //nextButton.removeEventListener('click', setNextButton);
-      //       //nextButton.removeEventListener('click', setNextButton,true)
-      //     }
-      //     //console.log('jsonData');
-      //     //console.log(jsonData);
-
-      //     // nextButton.addEventListener('click', function() {
-
-      //     //   console.log('result, status xhr')
-      //       // console.log(result)
-      //       // console.log(status)
-      //       // console.log(xhr)
-      //       //console.log(data)
-
-            
-      //       //console.log(jsonData)
-      //       //var urlString = '/userTop?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset
-      //       //var urlString = jsonData.next
-      //       //console.log('Next button URL string');
-      //       //console.log(urlString);
-      //       //console.log(access_token);
-      //       // $.ajax({
-      //       //   url: urlString,
-      //       //   headers: {
-      //       //     'Authorization': 'Bearer ' + access_token
-      //       //   },
-      //       //   json: true,
-      //       //   success: function(data){
-      //       //     console.log('Next button success');
-      //       //     console.log(data);
-      //       //     //console.log(data1);
-      //       //     var nextArtistTable = buildTopArtistTable(data);
-      //       //     //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
-
-      //       //     //console.log(document.getElementById("top-Artists-Table").childNodes);
-      //       //     var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
-      //       //     document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
-
-
-
-      //       //   }
-      //       // })
-      //     // })
-
-      //     $("next-button").off("click")
-
-      //     //Adding the event listner with an external function caused a loop for it to be called multiple times unintentionally. 
-      //     //nextButton.addEventListener("click", setNextButton(jsonData));
-
-      //     addedEventListenersToButtons=1
-
-      //   }
-
-
-        
-
-      //   //update the next and previous buttons 
-      // })
-
-
 
     </script>
 

@@ -11,12 +11,6 @@
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script type="text/javascript">
-  
-        console.log('in the new page');
-  
-</script>
-
 
     <h1>Top tracks Page</h1>
     <table id="top-Tracks-Table"></table>
@@ -175,7 +169,6 @@
                 },
           json: true,
           success: function(data){
-            console.log(data)
             if (data.total == 0){
               alert('No data available');
             }
@@ -212,14 +205,9 @@
 
       var nextButton = document.getElementById("next-button");
       nextButton.addEventListener('click', function(result,status,xhr) {
-        
-        console.log(result)
-        console.log(status)
-        console.log(xhr)
         offset += 20
         var urlString = '/userTopTracksNext?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset+'&time_range='+time_range
-        console.log('Next button URL string')
-        console.log(urlString)
+        
         $.ajax({
           url:urlString,
           headers: {
@@ -228,7 +216,7 @@
           json: true,
           success: function(data){
             console.log('Next button success');
-            console.log(data);
+            
 
               var nextTracksTable = buildTopTracksTable(data);
               
@@ -259,8 +247,7 @@
         
         offset -= 20
         var urlString = '/userTopTracksPrev?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset+'&time_range='+time_range
-        console.log('Next button URL string')
-        console.log(urlString)
+        
         $.ajax({
           url:urlString,
           headers: {
@@ -268,13 +255,10 @@
           },
           json: true,
           success: function(data){
-            console.log('Next button success');
-            console.log(data);
+           
 
               var previousTracksTable = buildTopTracksTable(data);
-              //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
-
-              //console.log(document.getElementById("top-Artists-Table").childNodes);
+              
               var existingTableNode = document.getElementById("top-Tracks-Table").firstChild;
               document.getElementById("top-Tracks-Table").replaceChild(previousTracksTable,existingTableNode);
 
