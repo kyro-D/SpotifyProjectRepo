@@ -126,11 +126,18 @@
                artistNamesStr += "& "
             }
 
-            artistNamesStr += artistObj[j];
+            artistNamesStr += artistObj[j].name;
 
             if (j < artistObj.length-1){
               artistNamesStr += ", "
             }
+          }
+
+          artistsCell.innerHTML=artistNamesStr;
+
+          artistsCell.style.padding = "10px";
+
+
 
 
 
