@@ -11,3 +11,14 @@ h1 {
     font-family: :"Helvetica";
 
 }
+
+.button {
+    padding: 15px;
+    font-family:"Helvetica";
+    margin: 15px;
+    background-color: #1DB954;
+    color: white;
+
+
+
+}
