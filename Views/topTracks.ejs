@@ -176,28 +176,33 @@
           json: true,
           success: function(data){
             console.log(data)
-            var tracksTable = buildTopTracksTable(data);
-            
-            var existingTableNode = document.getElementById("top-Tracks-Table").firstChild;
-            if (existingTableNode != undefined || existingTableNode != null){
-
-              document.getElementById("top-Tracks-Table").replaceChild(tracksTable,existingTableNode);
-
+            if (data == null){
+              alert('No data available');
             }
+            else{
+              var tracksTable = buildTopTracksTable(data);
+              
+              var existingTableNode = document.getElementById("top-Tracks-Table").firstChild;
+              if (existingTableNode != undefined || existingTableNode != null){
 
-            else {
-              document.getElementById("top-Tracks-Table").appendChild(tracksTable);
-            }
+                document.getElementById("top-Tracks-Table").replaceChild(tracksTable,existingTableNode);
 
-            if (data.next != null){
-              $("#next-button").show()
+              }
 
-            }
+              else {
+                document.getElementById("top-Tracks-Table").appendChild(tracksTable);
+              }
+
+              if (data.next != null){
+                $("#next-button").show()
+
+              }
 
 
-            
-            offset = data.offset
-            window.scrollTo(0, 0);
+              
+              offset = data.offset
+              window.scrollTo(0, 0);
+          }
 
           }
           
