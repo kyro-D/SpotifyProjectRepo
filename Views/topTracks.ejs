@@ -176,7 +176,7 @@
           json: true,
           success: function(data){
             console.log(data)
-            if (data == null){
+            if (data.total == 0){
               alert('No data available');
             }
             else{
