@@ -12,13 +12,11 @@ h1 {
 
 }
 
-.button {
+button {
     padding: 15px;
     font-family:"Helvetica";
     margin: 15px;
     background-color: #1DB954;
     color: white;
-
-
-
+    border-radius: 12px;
 }
