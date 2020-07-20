@@ -50,7 +50,7 @@
 
         document.getElementById("top-tracks-shortterm-button").href = "/userTopTracksRenderPage?access_token="+access_token+"&refresh_token="+refresh_token+"&offset=0&time_range=short_term"
 
-        document.getElementById("logout-button").addEventListener(,'click', function(){
+        document.getElementById("logout-button").addEventListener('click', function(){
             const logoutUrl = 'https://accounts.spotify.com/en/logout'
             const spotifyLogoutWindow = window.open(logoutUrl, 'Spotify Logout', 'width=700,height=500,top=40,left=40')                                             
             setTimeout(() => spotifyLogoutWindow.close(), 2000)
