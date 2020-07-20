@@ -192,52 +192,6 @@
         return table;
 
       }
-
-      // function setNextButton(jsonData) {
-
-      //       console.log(event)
-            
-      //       //console.log(jsonData)
-      //       //var urlString = '/userTop?access_token='+access_token+'&refresh_token='+refresh_token+'&offset='+offset
-      //       var urlString = jsonData.next
-      //       console.log('Next button URL string');
-      //       console.log(urlString);
-      //       //console.log(access_token);
-      //       //console.log(data)
-      //       if (urlString != undefined || urlString != null){
-      //         $.ajax({
-      //           url: urlString,
-      //           headers: {
-      //             'Authorization': 'Bearer ' + access_token
-      //           },
-      //           json: true
-      //         })
-
-      //       }
-      //       // $.ajax({
-      //       //   url: urlString,
-      //       //   headers: {
-      //       //     'Authorization': 'Bearer ' + access_token
-      //       //   },
-      //       //   json: true
-      //         // success: function(data){
-      //         //   console.log('Next button success');
-      //         //   console.log(data);
-      //         //   var nextArtistTable = buildTopArtistTable(data);
-      //         //   //document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,);
-
-      //         //   //console.log(document.getElementById("top-Artists-Table").childNodes);
-      //         //   var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
-      //         //   document.getElementById("top-Artists-Table").replaceChild(nextArtistTable,existingTableNode);
-
-
-
-      //         // }
-      //       // })
-      //       return 
-      // }
-
-      
       
       
       
@@ -257,28 +211,33 @@
           success: function(data){
             var artistTable = buildTopArtistTable(data);
             console.log(data)
-            var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
-            if (existingTableNode != undefined || existingTableNode != null){
-
-              document.getElementById("top-Artists-Table").replaceChild(artistTable,existingTableNode);
-
+            if (data.total == 0){
+              alert('No data available');
             }
-
             else {
-              document.getElementById("top-Artists-Table").appendChild(artistTable);
+              var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+              if (existingTableNode != undefined || existingTableNode != null){
+
+                document.getElementById("top-Artists-Table").replaceChild(artistTable,existingTableNode);
+
+              }
+
+              else {
+                document.getElementById("top-Artists-Table").appendChild(artistTable);
+              }
+
+              if (data.next != null){
+                $("#next-button").show()
+
+              }
+
+              $("obtain-user-top-artists").hide();
+
+
+              
+              offset = data.offset
+              window.scrollTo(0, 0);
             }
-
-            if (data.next != null){
-              $("#next-button").show()
-
-            }
-
-            $("obtain-user-top-artists").hide();
-
-
-            
-            offset = data.offset
-            window.scrollTo(0, 0);
 
           }
           
