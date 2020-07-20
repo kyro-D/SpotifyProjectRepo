@@ -14,7 +14,7 @@
 
     <h1>Top artist Page</h1>
     <table id="top-Artists-Table"></table>
-    <button class="btn btn-default" id="obtain-user-top-artists">List Top Artist Info</button>
+    
     <div id="navigation-buttons-container">
       <button class="btn btn-default" id="prev-button"> Previous</button>
       <button class="btn btn-default" id="next-button"> Next</button>
@@ -35,13 +35,7 @@
       
      
 
-      //hide the previous and next buttons will unhide them in the obtain top artist function
-      $(document).ready(function(){
-        //wait till document is ready before manipulating with jQuery
-        
-        $("#next-button").hide()
-        $("#prev-button").hide()
-      });
+      
 
 
       function buildTopArtistTable(data){
@@ -173,11 +167,15 @@
       }
       
       
-      
-      document.getElementById("obtain-user-top-artists").addEventListener('click', function() {
+      //hide the previous and next buttons will unhide them in the obtain top artist function
+      $(document).ready(function(){
+        //wait till document is ready before manipulating with jQuery
+        
+        $("#next-button").hide()
+        $("#prev-button").hide()
         
 
-       var urlString = '/userTopArtist?access_token='+access_token+'&offset=0'+'&time_range='+time_range
+        var urlString = '/userTopArtist?access_token='+access_token+'&offset=0'+'&time_range='+time_range
 
       
         $.ajax({
@@ -219,10 +217,58 @@
             }
 
           }
+        });
+
+      });
+      // document.getElementById("obtain-user-top-artists").addEventListener('click', function() {
+        
+
+      //   var urlString = '/userTopArtist?access_token='+access_token+'&offset=0'+'&time_range='+time_range
+
+      
+      //   $.ajax({
+          
+      //     url:urlString,
+      //     headers: {
+      //             'Authorization': 'Bearer ' + access_token
+      //           },
+      //     json: true,
+      //     success: function(data){
+      //       var artistTable = buildTopArtistTable(data);
+            
+      //       if (data.total == 0){
+      //         alert('No data available');
+      //       }
+      //       else {
+      //         var existingTableNode = document.getElementById("top-Artists-Table").firstChild;
+      //         if (existingTableNode != undefined || existingTableNode != null){
+
+      //           document.getElementById("top-Artists-Table").replaceChild(artistTable,existingTableNode);
+
+      //         }
+
+      //         else {
+      //           document.getElementById("top-Artists-Table").appendChild(artistTable);
+      //         }
+
+      //         if (data.next != null){
+      //           $("#next-button").show()
+
+      //         }
+
+      //         $("obtain-user-top-artists").hide();
+
+
+              
+      //         offset = data.offset
+      //         window.scrollTo(0, 0);
+      //       }
+
+      //     }
           
 
-        });
-      });
+      //   });
+      // });
 
       var nextButton = document.getElementById("next-button");
       nextButton.addEventListener('click', function(result,status,xhr) {
