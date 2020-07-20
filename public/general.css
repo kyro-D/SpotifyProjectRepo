@@ -20,4 +20,10 @@ h1 {
     background-color: #1DB954;
     color: black;
     border-radius: 12px;
+    transition-duration: 0.4s;
+}
+
+.btn-default:hover {
+  background-color: #7beaa2; /* Lighter Hue */
+  color: white;
 }
