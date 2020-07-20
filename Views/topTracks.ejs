@@ -117,18 +117,18 @@
           var artistsCell = row.insertCell();
           artistObj = topTracksArr[i].artists
           artistNames = artistObj[0].name
-          var artistNamesStr
+          var artistNamesStr = ""
           //Todo loop through the array to concatenate all the artist names
 
           //artistsCell.innerHTML = artistNames
           for (var j = 0; j<artistObj.length;j++){
-            if (j == artistObj.length-1){
+            if (j == artistObj.length-1 && artistObj.length > 1){
                artistNamesStr += "& "
             }
 
             artistNamesStr += artistObj[j].name;
 
-            if (j < artistObj.length-1){
+            if (j < artistObj.length-1 && artistObj.length > 1){
               artistNamesStr += ", "
             }
           }
