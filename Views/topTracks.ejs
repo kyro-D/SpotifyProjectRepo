@@ -41,7 +41,7 @@
       //hide the previous and next buttons will unhide them in the obtain top artist function
       $(document).ready(function(){
         //wait till document is ready before manipulating with jQuery
-        //$("#navigation-buttons-container").hide()
+        
         $("#next-button").hide()
         $("#prev-button").hide()
       });
@@ -152,15 +152,17 @@
       }
 
       
-      
-      
-      
-      document.getElementById("obtain-user-top-tracks").addEventListener('click', function() {
+      //hide the previous and next buttons on window load. Also request top track data from spotify on window load. 
+      $(document).ready(function(){
+        //wait till document is ready before manipulating with jQuery
+        
+        $("#next-button").hide()
+        $("#prev-button").hide()
         
 
        var urlString = '/userTopTracks?access_token='+access_token+'&offset=0'+'&time_range='+time_range
 
-        //same as above just changing the timerange of the top info 
+        //Request data from spotify endpoint for top tracks
         $.ajax({
           
           url:urlString,
@@ -195,7 +197,7 @@
               
               offset = data.offset
               window.scrollTo(0, 0);
-          }
+            }
 
           }
           
