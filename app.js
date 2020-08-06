@@ -56,17 +56,15 @@ app.use(express.static(__dirname + '/public'))
 //capitalize V for directory name because linux respects capital letters.
 app.set('views', path.join(__dirname, 'Views')) //heroku uses ubuntu servers. NEed to set folder like this?
 app.set('view engine', 'ejs');
-//var playlist = require('playlist');
-//var path = 'Macintosh HD⁩/Users⁩/kylerose⁩/Documents⁩/PlaylistProject⁩/SpotifyTutorial⁩/web-api-auth-examples⁩/⁨authorization_code⁩';
-//app.use('/static', express.static(path.join(__dirname, 'public')))
+
 
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  // your application requests authorization
-  //KYLE added playlist read private to scope 
+  
+  //Added playlist read private to scope and user top read access
   var scope = 'user-read-private user-read-email playlist-read-private user-top-read user-library-read user-read-playback-position playlist-read-collaborative';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
@@ -170,7 +168,7 @@ app.get('/refresh_token', function(req, res) {
 app.get('/playlist', function(req,res,body){
   var access_token = req.query.access_token;
   console.log('I am kyel')
-  //console.log(access_token)
+  
   var options = {
           url: 'https://api.spotify.com/v1/me/playlists?' + querystring.stringify({
             //set the playlist return limit to be 30 instead of the default 20
@@ -189,13 +187,7 @@ app.get('/playlist', function(req,res,body){
           var limit = body.limit
           var totalPlaylistNumberMessage = "totalPlaylistNumber:" + totalPlaylistNumber
           var playlists = body.items
-          //console.log(totalPlaylistNumberMessage)
-          //console.log(body.items[0])
-
-          //want to know if there are more playlists than the limit that was loaded
-          // if(limit < totalPlaylistNumber){
-
-          // }
+          
           //JSON that can be seen from the front end. Send it back to the request
           res.send({
             'playlistTotal': totalPlaylistNumber,
@@ -205,69 +197,15 @@ app.get('/playlist', function(req,res,body){
 })
 
 
-app.get('/playlistContents', function(req,res,body){
-  //get the data sent in the ajax request from html code 
-  var access_token = req.query.access_token;
-
-  var playlistId = req.query.plId;
-
-  console.log(playlistId)
-
-  console.log('TOWLIE')
-  //console.log(body)
-  
-    
-    var urlString = 'https://api.spotify.com/v1/playlists/4tYpWy1PU7PtDxDxB05rzH'
-    console.log(urlString)
-    var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
-    //use the request framework 
-    request.get(options, function(error, response, body){
-      console.log('Made with Tegridy');
-      //console.log(body);
-      //send over the total number of tracks and the tracks
-      //res.sendFile("playlist.html",{root : __dirname + '/public'});
-      //res.render("playlist.html",{root : __dirname + '/public'});
-      //res.send('playlist')
-      // res.send({
-      //   'totalTracks' : body.tracks.total,
-      //   'tracks' : body.tracks
-      // })
-      var totalTracks = body.tracks.total
-      //response.sendFile("playlist.html")
-      var tracks = body.tracks 
-      res.redirect('/playlistRenderPage' + options);
-      // res.redirect('/playlist' +
-      //     querystring.stringify({
-      //       access_token: access_token,
-      //       refresh_token: refresh_token
-      //     }));
-    });
-    console.log('Made with Tegridy 2');
-    //res.redirect('playlist', options);
-
-
-
-  })
 
 
 app.get('/playlistRenderPage', function(req,res,body){
-  // code isn't working bc the url from the a tag is staic and isn't including any of the variables passed along from url
+  
   console.log('Kyle you did it');
   //pass along the access token and request token. If no tokens don't go to url. 
   var access_token = req.query.access_token
   var refresh_token = req.query.refresh_token
-  //var access_token = req
-  //var refresh_token = req
-
-  //console.log('The tokens your highness');
-  //console.log(access_token)
-  //console.log(refresh_token)
-  //console.log(req.query)
-
+  
 
 
   if ( access_token == undefined || refresh_token == undefined ){
@@ -276,7 +214,7 @@ app.get('/playlistRenderPage', function(req,res,body){
   
   }
   else {
-    //res.render('playlist');
+    
     res.render('topArtist');
     console.log('SIIIIKE you made it through')
   }
@@ -289,15 +227,14 @@ app.get('/playlistRenderPage', function(req,res,body){
 
 
 
-
+//First top artist route used to initally render in topArtist view
 app.get('/userTopArtistRenderPage', function(req,res,body){
-  // code isn't working bc the url from the a tag is staic and isn't including any of the variables passed along from url
+  
   console.log('Kyle you did it');
   //pass along the access token and request token. If no tokens don't go to url. 
   var access_token = req.query.access_token
   var refresh_token = req.query.refresh_token
-  //var access_token = req
-  //var refresh_token = req
+  
 
   console.log('The tokens your highness');
   console.log(access_token)
@@ -312,7 +249,7 @@ app.get('/userTopArtistRenderPage', function(req,res,body){
   
   }
   else {
-    //res.render('playlist');
+    
     res.render('topArtist');
     console.log('SIIIIKE you made it through')
   }
@@ -335,7 +272,7 @@ app.get('/userTopArtist', function(req,res,body){
   var offset = req.query.offset
   var time_range = req.query.time_range
 
-  // var urlString = 'https://api.spotify.com/v1/me/top/artists?time_range=long_term'
+  
   var urlString = 'https://api.spotify.com/v1/me/top/artists?'
 
   if (offset != undefined){
@@ -345,8 +282,8 @@ app.get('/userTopArtist', function(req,res,body){
 
     })
   }
-  console.log('this is the url string below');
-  console.log(urlString)
+  //console.log('this is the url string below');
+  //console.log(urlString)
 
   var options = {
           url: urlString,
@@ -362,7 +299,7 @@ app.get('/userTopArtist', function(req,res,body){
   else {
     request.get(options, function(error, response, body){
       console.log('The deed is done old man. Sending ____');
-      //console.log(body);
+      
       //send the data back to the front end
       res.send(body);
     })
@@ -379,14 +316,14 @@ app.get('/userTopArtist', function(req,res,body){
 
 
 
-
+//Route for top artist next button
 app.get('/userTopArtistNext', function(req,res,body){
 
 
   console.log('In the user top artist next route');
   var access_token = req.query.access_token
 
-  //console.log(access_token)
+  
   var refresh_token = req.query.refresh_token
   var offset = req.query.offset
   var time_range = req.query.time_range
@@ -432,6 +369,7 @@ app.get('/userTopArtistNext', function(req,res,body){
 
 })
 
+//Route for top artist previous button
 app.get('/userTopArtistPrev', function(req,res,body){
   console.log('In the previous button route');
   var access_token = req.query.access_token
@@ -469,7 +407,7 @@ app.get('/userTopArtistPrev', function(req,res,body){
 
       }
       else{
-        console.log(body);
+        // console.log(body);
         //send the data back to the front end
         res.send(body);
 
@@ -484,6 +422,7 @@ app.get('/userTopArtistPrev', function(req,res,body){
 
 })
 
+//Main menu route to display the menu view
 app.get('/mainmenu', function(req,res,body){
   console.log('In mainmenu route')
   if (req.query.refresh_token == undefined || req.query.access_token == undefined){
@@ -499,20 +438,19 @@ app.get('/mainmenu', function(req,res,body){
 
 
 
-
+//Route called from main menu for top tracks selection
 app.get('/userTopTracksRenderPage', function(req,res,body){
-  // code isn't working bc the url from the a tag is staic and isn't including any of the variables passed along from url
+  
   console.log('Kyle you did it');
   //pass along the access token and request token. If no tokens don't go to url. 
   var access_token = req.query.access_token
   var refresh_token = req.query.refresh_token
-  //var access_token = req
-  //var refresh_token = req
+  
 
-  console.log('The tokens your highness');
-  console.log(access_token)
-  console.log(refresh_token)
-  console.log(req.query)
+  // console.log('The tokens your highness');
+  // console.log(access_token)
+  // console.log(refresh_token)
+  // console.log(req.query)
 
 
 
@@ -522,9 +460,9 @@ app.get('/userTopTracksRenderPage', function(req,res,body){
   
   }
   else {
-    //res.render('playlist');
+    
     res.render('topTracks');
-    console.log('SIIIIKE you made it through')
+    // console.log('SIIIIKE you made it through')
   }
   
 
@@ -534,7 +472,7 @@ app.get('/userTopTracksRenderPage', function(req,res,body){
 })
 
 
-
+//Route to make first APi request for top tracks
 app.get('/userTopTracks', function(req,res,body){
 
   console.log('In the user top track info route');
@@ -545,7 +483,7 @@ app.get('/userTopTracks', function(req,res,body){
   var offset = req.query.offset
   var time_range = req.query.time_range
 
-  // var urlString = 'https://api.spotify.com/v1/me/top/artists?time_range=long_term'
+  
   var urlString = 'https://api.spotify.com/v1/me/top/tracks?'
 
   if (offset != undefined){
@@ -589,7 +527,7 @@ app.get('/userTopTracks', function(req,res,body){
 
 
 
-
+//Route from top Tracks Next button
 app.get('/userTopTracksNext', function(req,res,body){
 
 
@@ -642,6 +580,7 @@ app.get('/userTopTracksNext', function(req,res,body){
 
 })
 
+//Route from the top tracks previous button
 app.get('/userTopTracksPrev', function(req,res,body){
   console.log('In the previous button route');
   var access_token = req.query.access_token
@@ -700,4 +639,4 @@ app.get('/userTopTracksPrev', function(req,res,body){
 console.log('Listening on '+ port);
 app.listen(port);
 
-// console.log(process.env.HOST);
+
