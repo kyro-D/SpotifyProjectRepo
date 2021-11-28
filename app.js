@@ -10,20 +10,19 @@
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
-var querystring = require('querystring');
+var queryString = require('querystring');
 var cookieParser = require('cookie-parser');
 const path = require('path');
 
-//require('dotenv').config({path:"kyleproject.env"});
+require('dotenv').config({path:"kyleproject.env"});
 
-//var client_id = process.env.SPOTIFYCLIENTID; // Your client id
-//var client_secret = process.env.SPOTIFYCLIENTSECRET; // Your secret
 
 //Client ID and secret for Heroku to access
 var client_id = process.env.SpotifyClientId;
-var client_secret = process.env.SpotifyClinetSecret;
+//TODO fix this typo in heroku
+var client_secret = process.env.SpotifyClientSecret;
 var port = process.env.PORT;
-var host = process.env.HOST
+var host = process.env.HOST;
 
 //var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 //change redirect URI to be compatiable with heroku server (IE not local host)
@@ -69,7 +68,7 @@ app.get('/login', function(req, res) {
   //KYLE added playlist read private to scope 
   var scope = 'user-read-private user-read-email playlist-read-private user-top-read user-library-read user-read-playback-position playlist-read-collaborative';
   res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
+    queryString.stringify({
       response_type: 'code',
       client_id: client_id,
       scope: scope,
@@ -89,7 +88,7 @@ app.get('/callback', function(req, res) {
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
-      querystring.stringify({
+      queryString.stringify({
         error: 'state_mismatch'
       }));
   } else {
@@ -126,13 +125,13 @@ app.get('/callback', function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('/mainmenu?' +
-          querystring.stringify({
+          queryString.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
       } else {
         res.redirect('/#' +
-          querystring.stringify({
+          queryString.stringify({
             error: 'invalid_token'
           }));
       }
@@ -172,37 +171,32 @@ app.get('/playlist', function(req,res,body){
   console.log('I am kyel')
   //console.log(access_token)
   var options = {
-          url: 'https://api.spotify.com/v1/me/playlists?' + querystring.stringify({
-            //set the playlist return limit to be 30 instead of the default 20
-            limit : '30'
-          }),
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
+    url: 'https://api.spotify.com/v1/me/playlists?' + queryString.stringify({
+      //set the playlist return limit to be 30 instead of the default 20
+      limit : '30'
+    }),
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  };
   console.log(options)
 
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body) {
-          console.log('In Playlist route')
-          //console.log(body);
-          var totalPlaylistNumber = body.total
-          var limit = body.limit
-          var totalPlaylistNumberMessage = "totalPlaylistNumber:" + totalPlaylistNumber
-          var playlists = body.items
-          //console.log(totalPlaylistNumberMessage)
-          //console.log(body.items[0])
+    console.log('In Playlist route')
+    //console.log(body);
+    var totalPlaylistNumber = body.total
+    var limit = body.limit
+    var totalPlaylistNumberMessage = "totalPlaylistNumber:" + totalPlaylistNumber
+    var playlists = body.items
+    
+    //JSON that can be seen from the front end. Send it back to the request
+    res.send({
+      'playlistTotal': totalPlaylistNumber,
+      'playlists': playlists
+    });
 
-          //want to know if there are more playlists than the limit that was loaded
-          // if(limit < totalPlaylistNumber){
-
-          // }
-          //JSON that can be seen from the front end. Send it back to the request
-          res.send({
-            'playlistTotal': totalPlaylistNumber,
-            'playlists': playlists}
-            )
-        });
-})
+  });
+});
 
 
 app.get('/playlistContents', function(req,res,body){
@@ -211,47 +205,40 @@ app.get('/playlistContents', function(req,res,body){
 
   var playlistId = req.query.plId;
 
-  console.log(playlistId)
-
-  console.log('TOWLIE')
-  //console.log(body)
-  
+  console.log(playlistId);
     
-    var urlString = 'https://api.spotify.com/v1/playlists/4tYpWy1PU7PtDxDxB05rzH'
-    console.log(urlString)
-    var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
-    //use the request framework 
-    request.get(options, function(error, response, body){
-      console.log('Made with Tegridy');
-      //console.log(body);
-      //send over the total number of tracks and the tracks
-      //res.sendFile("playlist.html",{root : __dirname + '/public'});
-      //res.render("playlist.html",{root : __dirname + '/public'});
-      //res.send('playlist')
-      // res.send({
-      //   'totalTracks' : body.tracks.total,
-      //   'tracks' : body.tracks
-      // })
-      var totalTracks = body.tracks.total
-      //response.sendFile("playlist.html")
-      var tracks = body.tracks 
-      res.redirect('/playlistRenderPage' + options);
-      // res.redirect('/playlist' +
-      //     querystring.stringify({
-      //       access_token: access_token,
-      //       refresh_token: refresh_token
-      //     }));
-    });
-    console.log('Made with Tegridy 2');
-    //res.redirect('playlist', options);
-
-
-
-  })
+  var urlString = 'https://api.spotify.com/v1/playlists/4tYpWy1PU7PtDxDxB05rzH';
+  
+  var options = {
+    url: urlString,
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  };
+  //use the request framework 
+  request.get(options, function(error, response, body){
+    console.log('Made with Tegridy');
+    //console.log(body);
+    //send over the total number of tracks and the tracks
+    //res.sendFile("playlist.html",{root : __dirname + '/public'});
+    //res.render("playlist.html",{root : __dirname + '/public'});
+    //res.send('playlist')
+    // res.send({
+    //   'totalTracks' : body.tracks.total,
+    //   'tracks' : body.tracks
+    // })
+    var totalTracks = body.tracks.total
+    //response.sendFile("playlist.html")
+    var tracks = body.tracks 
+    res.redirect('/playlistRenderPage' + options);
+    // res.redirect('/playlist' +
+    //     queryString.stringify({
+    //       access_token: access_token,
+    //       refresh_token: refresh_token
+    //     }));
+  });
+  console.log('Made with Tegridy 2');
+  //res.redirect('playlist', options);
+});
 
 
 app.get('/playlistRenderPage', function(req,res,body){
@@ -260,15 +247,6 @@ app.get('/playlistRenderPage', function(req,res,body){
   //pass along the access token and request token. If no tokens don't go to url. 
   var access_token = req.query.access_token
   var refresh_token = req.query.refresh_token
-  //var access_token = req
-  //var refresh_token = req
-
-  //console.log('The tokens your highness');
-  //console.log(access_token)
-  //console.log(refresh_token)
-  //console.log(req.query)
-
-
 
   if ( access_token == undefined || refresh_token == undefined ){
     console.log('Sending back to home page');
@@ -280,12 +258,7 @@ app.get('/playlistRenderPage', function(req,res,body){
     res.render('topArtist');
     console.log('SIIIIKE you made it through')
   }
-  
-
-
-
-
-})
+});
 
 
 
@@ -316,11 +289,6 @@ app.get('/userTopArtistRenderPage', function(req,res,body){
     res.render('topArtist');
     console.log('SIIIIKE you made it through')
   }
-  
-
-
-
-
 })
 
 
@@ -335,24 +303,22 @@ app.get('/userTopArtist', function(req,res,body){
   var offset = req.query.offset
   var time_range = req.query.time_range
 
-  // var urlString = 'https://api.spotify.com/v1/me/top/artists?time_range=long_term'
   var urlString = 'https://api.spotify.com/v1/me/top/artists?'
 
   if (offset != undefined){
-    urlString += querystring.stringify({
+    urlString += queryString.stringify({
       time_range : time_range,
       offset: offset
-
     })
   }
   console.log('this is the url string below');
-  console.log(urlString)
+  console.log(urlString);
 
   var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
+    url: urlString,
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  };
 
   if ( access_token == undefined){
     console.log('Sending back to home page');
@@ -368,10 +334,6 @@ app.get('/userTopArtist', function(req,res,body){
     })
     
   }
-
-
-
-
 })
 
 
@@ -381,8 +343,6 @@ app.get('/userTopArtist', function(req,res,body){
 
 
 app.get('/userTopArtistNext', function(req,res,body){
-
-
   console.log('In the user top artist next route');
   var access_token = req.query.access_token
 
@@ -391,10 +351,10 @@ app.get('/userTopArtistNext', function(req,res,body){
   var offset = req.query.offset
   var time_range = req.query.time_range
 
-  var urlString = 'https://api.spotify.com/v1/me/top/artists?'
+  var urlString = 'https://api.spotify.com/v1/me/top/artists?';
 
   if (offset != undefined){
-    urlString += querystring.stringify({
+    urlString += queryString.stringify({
       offset: offset,
       time_range: time_range
     })
@@ -444,16 +404,16 @@ app.get('/userTopArtistPrev', function(req,res,body){
   var urlString = 'https://api.spotify.com/v1/me/top/artists?'
 
   if (offset != undefined){
-    urlString += querystring.stringify({
+    urlString += queryString.stringify({
       offset: offset,
       time_range: time_range
     })
 
   var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
+    url: urlString,
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  };
   if ( access_token == undefined){
     console.log('Sending back to home page');
     res.redirect('/#tokenErr=missingAccessToken') // set error for html to render an alert
@@ -514,8 +474,6 @@ app.get('/userTopTracksRenderPage', function(req,res,body){
   console.log(refresh_token)
   console.log(req.query)
 
-
-
   if ( access_token == undefined || refresh_token == undefined ){
     console.log('Sending back to home page');
     res.redirect('/#tokenErr=missingAccessToken') // set error for html to render an alert
@@ -526,11 +484,6 @@ app.get('/userTopTracksRenderPage', function(req,res,body){
     res.render('topTracks');
     console.log('SIIIIKE you made it through')
   }
-  
-
-
-
-
 })
 
 
@@ -549,7 +502,7 @@ app.get('/userTopTracks', function(req,res,body){
   var urlString = 'https://api.spotify.com/v1/me/top/tracks?'
 
   if (offset != undefined){
-    urlString += querystring.stringify({
+    urlString += queryString.stringify({
       time_range : time_range,
       offset: offset
 
@@ -559,10 +512,10 @@ app.get('/userTopTracks', function(req,res,body){
   console.log(urlString)
 
   var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
+    url: urlString,
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  };
 
   if ( access_token == undefined){
     console.log('Sending back to home page');
@@ -576,12 +529,7 @@ app.get('/userTopTracks', function(req,res,body){
       //send the data back to the front end
       res.send(body);
     })
-    
   }
-
-
-
-
 })
 
 
@@ -591,8 +539,6 @@ app.get('/userTopTracks', function(req,res,body){
 
 
 app.get('/userTopTracksNext', function(req,res,body){
-
-
   console.log('In the user top artist next route');
   var access_token = req.query.access_token
 
@@ -604,17 +550,17 @@ app.get('/userTopTracksNext', function(req,res,body){
   var urlString = 'https://api.spotify.com/v1/me/top/tracks?'
 
   if (offset != undefined){
-    urlString += querystring.stringify({
+    urlString += queryString.stringify({
       offset: offset,
       time_range: time_range
     })
   }
 
   var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
+    url: urlString,
+    headers: { 'Authorization': 'Bearer ' + access_token },
+    json: true
+  };
 
   if ( access_token == undefined){
     console.log('Sending back to home page');
@@ -627,19 +573,14 @@ app.get('/userTopTracksNext', function(req,res,body){
       if (error != null || error != undefined){
         console.log('encountered error')
         console.log(error)
-
       }
       else{
         console.log(body);
         //send the data back to the front end
         res.send(body);
-
       }
-      
     })
   }
-    
-
 })
 
 app.get('/userTopTracksPrev', function(req,res,body){
@@ -654,44 +595,38 @@ app.get('/userTopTracksPrev', function(req,res,body){
   var urlString = 'https://api.spotify.com/v1/me/top/tracks?'
 
   if (offset != undefined){
-    urlString += querystring.stringify({
+    urlString += queryString.stringify({
       offset: offset,
       time_range: time_range
     })
 
-  var options = {
-          url: urlString,
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
-  if ( access_token == undefined){
-    console.log('Sending back to home page');
-    res.redirect('/#tokenErr=missingAccessToken') // set error for html to render an alert
-  
+    var options = {
+      url: urlString,
+      headers: { 'Authorization': 'Bearer ' + access_token },
+      json: true
+    };
+
+    if ( access_token == undefined){
+      console.log('Sending back to home page');
+      res.redirect('/#tokenErr=missingAccessToken') // set error for html to render an alert
+    }
+
+    else {
+      request.get(options, function(error, response, body){
+        console.log('The deed is done');
+        if (error != null || error != undefined){
+          console.log('encountered error')
+          console.log(error)
+
+        }
+        else{
+          console.log(body);
+          //send the data back to the front end
+          res.send(body);
+        }
+      })
+    }
   }
-
-  else {
-    request.get(options, function(error, response, body){
-      console.log('The deed is done');
-      if (error != null || error != undefined){
-        console.log('encountered error')
-        console.log(error)
-
-      }
-      else{
-        console.log(body);
-        //send the data back to the front end
-        res.send(body);
-
-      }
-      
-    })
-  }
-
-
-
-  }
-
 })
 
 
