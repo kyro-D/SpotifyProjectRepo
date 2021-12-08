@@ -12,7 +12,8 @@
     "express": "~4.16.0",
     "path": "^0.12.7",
     "querystring": "^0.2.1",
-    "request": "~2.83.0"
+    "request": "~2.83.0",
+    "json-schema": ">=0.4.0",
   },
   "license": "License used utlined in spotify developer agreement",
   "scripts": {
