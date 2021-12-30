@@ -18,6 +18,12 @@ function App() {
           Learn React
         </a>
       </header>
+      <div className="spotify-test-div">
+        Login with Spotify
+        <a href="http://localhost:8888/login">
+          <button>Login</button>
+        </a>
+      </div>
     </div>
   );
 }

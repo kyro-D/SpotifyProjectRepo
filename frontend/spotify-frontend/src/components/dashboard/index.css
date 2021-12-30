@@ -1,0 +1,10 @@
+.dashboard-wrapper{
+    display: flex;
+    flex-direction: column;
+    padding: 3em;
+    width: 100%;
+}
+
+.dashboard-wrapper .return-to-dashboard-btn{
+    margin-bottom: 32px;
+}

@@ -27,6 +27,12 @@
 .App-link {
   color: #61dafb;
 }
+.spotify-test-div{
+  display: flex;
+  flex-direction: column;
+  padding: 4em;
+  color: var(--color-text);
+}
 
 @keyframes App-logo-spin {
   from {
