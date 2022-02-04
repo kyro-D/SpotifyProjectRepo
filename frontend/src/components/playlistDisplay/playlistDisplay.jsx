@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import './index.css';
 import PlaylistView from "./playlistView";
-import axios from "axios";
 
 
 
@@ -9,7 +8,6 @@ function PlaylistDisplay({playlistJson, access_token}){
 
     const [currentPlaylists, setCurrentPlaylists] = useState(playlistJson);
 
-    const [tracks, setTracks] = useState();
     
 
     return(

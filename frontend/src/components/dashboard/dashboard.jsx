@@ -6,7 +6,7 @@ import PlaylistDisplay from '../playlistDisplay/playlistDisplay';
 
 const pingBackendPlaylists = async (access_token, setRequestStatus, setPlaylistJson) => {
     let endpoint = "http://localhost:8888/playlists";
-    let params = new URLSearchParams;
+    let params = new URLSearchParams();
     params.append('access_token', access_token);
     endpoint += '?' + params.toString();
     

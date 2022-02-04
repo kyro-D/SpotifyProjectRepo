@@ -13,6 +13,7 @@
  var querystring = require('querystring');
  var cookieParser = require('cookie-parser');
  require('dotenv').config({path:".env"});
+ var path = require('path');
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
@@ -52,6 +53,8 @@
  app.use(express.static(__dirname + '/public'))
     .use(cors())
     .use(cookieParser());
+
+ app.use(express.static(path.join(__dirname, 'build')));
  
  app.get('/login', function(req, res) {
  
@@ -123,7 +126,7 @@ app.get('/callback', function(req, res) {
          params.append('access_token', access_token);
          params.append('refresh_token', refresh_token);
          // we can also pass the token to the browser to make requests from there
-         res.redirect('http://localhost:3000/dashboard?'+
+         res.redirect('http://localhost:8888/dashboard?'+
             params
           );
        } else {
@@ -142,7 +145,7 @@ app.get('/callback', function(req, res) {
    var refresh_token = req.query.refresh_token;
 
    var authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
+    url: `https://${HOST}:${PORT}/dashboard`,
     headers: { 'Authorization': 'Basic ' + (new Buffer.from((client_id + ':' + client_secret).toString(), 'base64')) },
     form: {
       grant_type: 'refresh_token',
@@ -210,4 +213,9 @@ app.get('/callback', function(req, res) {
  
  console.log('Listening on 8888');
  app.listen(8888);
+
+// serve all other requests from react frontend
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
  

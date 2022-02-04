@@ -2,10 +2,9 @@ import {
     BrowserRouter,
     Routes,
     Route,
-    Link
   } from "react-router-dom";
 
-  import App from "../App";
+  import Login from "./login/Login";
   import Dashboard from "./dashboard/dashboard";
   import './approuter.css'
   
@@ -15,7 +14,7 @@ function AppRouter(){
         <BrowserRouter>
             <section className="application-body">
                 <Routes>
-                    <Route path="/" element={<App/>}/>
+                    <Route path="/" element={<Login/>}/>
                     <Route path="/dashboard" element={<Dashboard/>}/>
                 </Routes>
             </section>

@@ -9,7 +9,7 @@ const handlePlaylistClick = (showPlaylistDetails, setShowPlaylistDetails) => {
 const getPlaylistTracks = async (access_token, url, setTracks) => {
     
     let endpoint = "http://localhost:8888/playlist-tracks";
-    let params = new URLSearchParams;
+    let params = new URLSearchParams();
     params.append('access_token', access_token);
     let gotAllTracks = false;
     let allTracks = [];
@@ -45,7 +45,7 @@ function PlaylistView({index, playlist, access_token}){
             getPlaylistTracks(access_token, playlist.tracks.href, setPlaylistTracks)
         }
         
-    }, [access_token]);
+    }, [access_token, playlist.tracks.href]);
 
     let trackCounter = 0;
     console.log(playlist.followers);
@@ -53,7 +53,7 @@ function PlaylistView({index, playlist, access_token}){
     return(
         <div className="playlist-entry" key={index} >
             <div className="playlist-entry-image-wrapper" onClick={() => handlePlaylistClick(showPlaylistDetails, setShowPlaylistDetails)}>
-                <img src={playlist.images[0].url} />
+                <img src={playlist.images[0].url} alt="playlist cover"/>
             </div>
             <div className="playlist-entry-title" onClick={() => handlePlaylistClick(showPlaylistDetails, setShowPlaylistDetails)}>
                 {playlist.name}
