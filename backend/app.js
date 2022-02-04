@@ -17,8 +17,10 @@
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
- var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
- 
+//  var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+
+// redirect uri for heroku deployment
+var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback'; 
 
  /**
   * Generates a random string containing numbers and letters
