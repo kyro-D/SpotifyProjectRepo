@@ -130,7 +130,7 @@ app.get('/callback', function(req, res) {
          params.append('access_token', access_token);
          params.append('refresh_token', refresh_token);
          // we can also pass the token to the browser to make requests from there
-         res.redirect('http://localhost:8888/dashboard?'+
+         res.redirect(`https://${host}/dashboard?`+
             params
           );
        } else {
