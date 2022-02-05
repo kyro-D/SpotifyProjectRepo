@@ -9,7 +9,7 @@ const pingBackendPlaylists = async (access_token, setRequestStatus, setPlaylistJ
     let params = new URLSearchParams();
     params.append('access_token', access_token);
     endpoint += '?' + params.toString();
-    
+    console.log('frontend endpoint var: ' + endpoint);
     let playlists = await axios.get(endpoint);
     //if there is error on backend, code after this won't get executed due to axios error handling (I think)
     setRequestStatus(true);
