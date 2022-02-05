@@ -5,7 +5,7 @@ function Login() {
     <div className="App">
       <div className="spotify-test-div">
         Login with Spotify
-        <a href="http://localhost:8888/login">
+        <a href="/login">
           <button>Login</button>
         </a>
       </div>
