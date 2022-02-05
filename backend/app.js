@@ -141,7 +141,7 @@ app.get('/callback', function(req, res) {
         console.log(`host variable: ${host})`);
         console.log('process.env.dburl.host variable: ')
         console.log(process.env.DATABASE_URL.host);
-         res.redirect(`${process.env.DATABASE_URL.host}/dashboard?`+
+         res.redirect(`${host}/dashboard?`+
             params
           );
        } else {
@@ -160,7 +160,7 @@ app.get('/callback', function(req, res) {
    var refresh_token = req.query.refresh_token;
 
    var authOptions = {
-    url: `https://${host}:${port}/dashboard`,
+    url: `{host}/dashboard`,
     headers: { 'Authorization': 'Basic ' + (new Buffer.from((client_id + ':' + client_secret).toString(), 'base64')) },
     form: {
       grant_type: 'refresh_token',
