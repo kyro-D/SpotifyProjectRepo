@@ -16,8 +16,9 @@
  var path = require('path');
  var port = process.env.PORT;
 var host = process.env.DATABASE_URL.host;
+var hostTwo = process.env.HOST;
 
-console.log(`port: ${port } host: ${host}`);
+console.log(`port: ${port } host: ${host} hostTwo: ${hostTwo}`);
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
