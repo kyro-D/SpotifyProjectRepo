@@ -110,10 +110,12 @@ app.get('/callback', function(req, res) {
        },
        json: true
      };
+
+     console.log('posting authOptions to get tokens');
  
      request.post(authOptions, function(error, response, body) {
        if (!error && response.statusCode === 200) {
-         console.log('it worked')
+         console.log('it worked');
  
          var access_token = body.access_token,
              refresh_token = body.refresh_token;
@@ -195,7 +197,8 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
-    console.log('options obj : '+ options.url, options.headers);
+    console.log('options obj : '+options.headers);
+   
 
     request.get(options, function(error, response, body) {
       if (!error && response.statusCode === 200) {
