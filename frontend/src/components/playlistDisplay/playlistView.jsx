@@ -48,7 +48,6 @@ function PlaylistView({index, playlist, access_token}){
     }, [access_token, playlist.tracks.href]);
 
     let trackCounter = 0;
-    console.log(playlist.followers);
 
     return(
         <div className="playlist-entry" key={index} >
