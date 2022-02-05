@@ -12,8 +12,10 @@
  var cors = require('cors');
  var querystring = require('querystring');
  var cookieParser = require('cookie-parser');
- require('dotenv').config({path:".env"});
+//  require('dotenv').config({path:".env"});
  var path = require('path');
+ var port = process.env.PORT;
+var host = process.env.HOST;
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
@@ -147,7 +149,7 @@ app.get('/callback', function(req, res) {
    var refresh_token = req.query.refresh_token;
 
    var authOptions = {
-    url: `https://${HOST}:${PORT}/dashboard`,
+    url: `https://${host}:${port}/dashboard`,
     headers: { 'Authorization': 'Basic ' + (new Buffer.from((client_id + ':' + client_secret).toString(), 'base64')) },
     form: {
       grant_type: 'refresh_token',
@@ -213,8 +215,8 @@ app.get('/callback', function(req, res) {
     })
   })
  
- console.log('Listening on 8888');
- app.listen(8888);
+//  console.log('Listening on ' + port);
+ app.listen(port);
 
 // serve all other requests from react frontend
 app.get('/*', (req, res) => {
