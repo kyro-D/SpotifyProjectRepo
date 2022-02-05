@@ -138,6 +138,7 @@ app.get('/callback', function(req, res) {
         //   );
 
         console.log(`https://${host}/dashboard)`);
+        console.log(process.env.DATABASE_URL);
        } else {
          res.status(401).send(
            querystring.stringify({
