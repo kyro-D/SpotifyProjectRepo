@@ -2,7 +2,7 @@
   "name": "spotify-project-repo",
 
   "scripts": {
-    "start": "node backend/app.js",
+    "start": "cd backend && node app.js",
     "build": "cd frontend && npm install && npm run build && cd ../backend && npm install"
   }
 }
