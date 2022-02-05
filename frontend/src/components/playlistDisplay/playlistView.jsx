@@ -8,7 +8,7 @@ const handlePlaylistClick = (showPlaylistDetails, setShowPlaylistDetails) => {
 
 const getPlaylistTracks = async (access_token, url, setTracks) => {
     
-    let endpoint = "http://localhost:8888/playlist-tracks";
+    let endpoint = "/playlist-tracks";
     let params = new URLSearchParams();
     params.append('access_token', access_token);
     let gotAllTracks = false;
