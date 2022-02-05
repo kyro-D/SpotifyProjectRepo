@@ -17,7 +17,7 @@
  var port = process.env.PORT;
 var host = process.env.HOST;
 
-console.log(`port: ${port } host: ${host}`)
+console.log(`port: ${port } host: ${host}`);
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
@@ -132,9 +132,12 @@ app.get('/callback', function(req, res) {
          params.append('access_token', access_token);
          params.append('refresh_token', refresh_token);
          // we can also pass the token to the browser to make requests from there
-         res.redirect(`https://${host}/dashboard?`+
-            params
-          );
+        
+         //  res.redirect(`https://${host}/dashboard?`+
+        //     params
+        //   );
+
+        console.log(`https://${host}/dashboard)`);
        } else {
          res.status(401).send(
            querystring.stringify({
