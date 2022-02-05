@@ -69,7 +69,7 @@ var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback';
    res.cookie(stateKey, state);
  
    // your application requests authorization
-   var scope = 'user-read-private user-read-email';
+   var scope = 'user-read-private user-read-email playlist-modify-private playlist-read-collaborative playlist-read-private user-top-read user-library-read playlist-modify-public user-read-currently-playing';
    res.redirect('https://accounts.spotify.com/authorize?' +
      querystring.stringify({
        response_type: 'code',
@@ -139,10 +139,8 @@ app.get('/callback', function(req, res) {
          //  res.redirect(`https://${host}/dashboard?`+
         //     params
         //   );
-
-        // console.log(`host variable: ${host})`);
-        // console.log('process.env.dburl.host variable: ')
-        // console.log(process.env.DATABASE_URL.host);
+        
+        
          res.redirect(`${host}/dashboard?`+
             params
           );
