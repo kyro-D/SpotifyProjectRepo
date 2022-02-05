@@ -16,6 +16,8 @@
  var path = require('path');
  var port = process.env.PORT;
 var host = process.env.HOST;
+
+console.log(`port: ${port } host: ${host}`)
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
