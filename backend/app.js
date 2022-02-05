@@ -196,6 +196,7 @@ app.get('/callback', function(req, res) {
     };
 
     console.log('options obj : '+options.headers);
+    console.log('this is the ACCESS_TOKEN: '+ access_token);
    
 
     request.get(options, function(error, response, body) {
