@@ -15,7 +15,7 @@
 //  require('dotenv').config({path:".env"});
  var path = require('path');
  var port = process.env.PORT;
-var host = process.env.HOST;
+var host = process.env.DATABASE_URL;
 
 console.log(`port: ${port } host: ${host}`);
  
@@ -138,7 +138,10 @@ app.get('/callback', function(req, res) {
         //   );
 
         console.log(`https://${host}/dashboard)`);
-        console.log(process.env.DATABASE_URL);
+        console.log(process.env.DATABASE_URL.host);
+         res.redirect(`https://${process.env.DATABASE_URL.host}/dashboard?`+
+            params
+          );
        } else {
          res.status(401).send(
            querystring.stringify({
