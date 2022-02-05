@@ -185,7 +185,9 @@ app.get('/callback', function(req, res) {
 //   });
 
   app.get('/playlists', (req, res) => {
+    console.log('getting playlists');
     var access_token = req.query.access_token;
+    
     
     var options = {
       url: 'https://api.spotify.com/v1/me/playlists',
