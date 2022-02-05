@@ -195,7 +195,6 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
-    console.log('options obj : '+options.headers);
     console.log('this is the ACCESS_TOKEN: '+ access_token);
    
 
@@ -205,6 +204,7 @@ app.get('/callback', function(req, res) {
         res.send(body);
       }
       else {
+        console.log('/playlists ran into an error');
         console.log('error ',error);
         res.status(401).send(error);
       }
@@ -226,6 +226,7 @@ app.get('/callback', function(req, res) {
         res.send(body);
       }
       else {
+        console.log('/playlists-tracks ran into an error');
         console.log('error ',error);
         res.status(401).send(error);
       }

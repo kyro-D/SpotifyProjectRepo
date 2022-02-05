@@ -13,6 +13,7 @@ const getPlaylistTracks = async (access_token, url, setTracks) => {
     params.append('access_token', access_token);
     let gotAllTracks = false;
     let allTracks = [];
+    console.log('looping through tracks on client')
     while(!gotAllTracks){
 
         params.set('url', url);
