@@ -12,20 +12,22 @@
  var cors = require('cors');
  var querystring = require('querystring');
  var cookieParser = require('cookie-parser');
- require('dotenv').config({path:".env"});
+//  require('dotenv').config({path:".env"});
  var path = require('path');
  var port = process.env.PORT;
 
 var host = process.env.HOST;
 
+const userUtils = require('./userUtils');
+
 console.log(`port: ${port } host: ${host} `);
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
- var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+//  var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // redirect uri for heroku deployment
-// var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback'; 
+var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback'; 
 
  /**
   * Generates a random string containing numbers and letters
@@ -120,30 +122,30 @@ app.get('/callback', function(req, res) {
          var access_token = body.access_token,
              refresh_token = body.refresh_token;
  
-        //  var options = {
-        //    url: 'https://api.spotify.com/v1/me',
-        //    headers: { 'Authorization': 'Bearer ' + access_token },
-        //    json: true
-        //  };
+         var options = {
+           url: 'https://api.spotify.com/v1/me',
+           headers: { 'Authorization': 'Bearer ' + access_token },
+           json: true
+         };
  
         //  // use the access token to access the Spotify Web API
-        //  request.get(options, function(error, response, body) {
-        //    console.log(body);
-        //  });
- 
-         var params = new URLSearchParams;
-         params.append('access_token', access_token);
-         params.append('refresh_token', refresh_token);
-         // we can also pass the token to the browser to make requests from there
-        
-         //  res.redirect(`https://${host}/dashboard?`+
-        //     params
-        //   );
-        
-        
-         res.redirect(`http://${host}:${port}/dashboard?`+
-            params
-          );
+         request.get(options, function(error, response, body) {
+           let userId = body.id;
+
+           
+           var params = new URLSearchParams;
+           params.append('userId', userId);
+           // we can also pass the token to the browser to make requests from there
+           
+           //  res.redirect(`https://${host}/dashboard?`+
+           //     params
+           //   );
+
+           userUtils.storeNewUser(userId, access_token);
+           res.redirect(`${host}/dashboard?`+
+           params
+           );
+         });
        } else {
          res.status(401).send(
            querystring.stringify({
@@ -186,16 +188,18 @@ app.get('/callback', function(req, res) {
 
   app.get('/playlists', (req, res) => {
     console.log('getting playlists');
-    var access_token = req.query.access_token;
+    const userId = req.query.userId;
+    const access_token = userUtils.getUserAccessToken(userId);
+    console.log('retrieved access token')
     
     
     var options = {
-      url: 'https://api.spotify.com/v1/me/playlists',
+      url: `https://api.spotify.com/v1/users/${userId}/playlists`,
       headers: { 'Authorization': 'Bearer ' + access_token },
       json: true
     };
 
-    console.log('this is the ACCESS_TOKEN: '+ access_token);
+    // console.log('this is the ACCESS_TOKEN: '+ access_token);
    
 
     request.get(options, function(error, response, body) {
@@ -213,7 +217,8 @@ app.get('/callback', function(req, res) {
   })
 
   app.get('/playlist-tracks', (req, res) => {
-    var access_token = req.query.access_token;
+    const userId = req.query.userId;
+    const access_token = userUtils.getUserAccessToken(userId);
     var url = req.query.url;
     var options = {
       url: url, 
