@@ -6,11 +6,11 @@ const handlePlaylistClick = (showPlaylistDetails, setShowPlaylistDetails) => {
     
 }
 
-const getPlaylistTracks = async (access_token, url, setTracks) => {
+const getPlaylistTracks = async (userId, url, setTracks) => {
     
     let endpoint = "/playlist-tracks";
     let params = new URLSearchParams();
-    params.append('access_token', access_token);
+    params.append('userId', userId);
     let gotAllTracks = false;
     let allTracks = [];
     console.log('looping through tracks on client')
@@ -37,16 +37,16 @@ const getPlaylistTracks = async (access_token, url, setTracks) => {
 }
 
 
-function PlaylistView({index, playlist, access_token}){
+function PlaylistView({index, playlist, userId}){
     const [showPlaylistDetails, setShowPlaylistDetails] = useState(false);
     const [playlistTracks, setPlaylistTracks] = useState(null);
 
     useEffect(()=> {
-        if(access_token !== null){
-            getPlaylistTracks(access_token, playlist.tracks.href, setPlaylistTracks)
+        if(userId !== null){
+            getPlaylistTracks(userId, playlist.tracks.href, setPlaylistTracks)
         }
         
-    }, [access_token, playlist.tracks.href]);
+    }, [userId, playlist.tracks.href]);
 
     let trackCounter = 0;
 

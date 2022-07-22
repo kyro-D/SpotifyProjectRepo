@@ -4,7 +4,7 @@ import PlaylistView from "./playlistView";
 
 
 
-function PlaylistDisplay({playlistJson, access_token}){
+function PlaylistDisplay({playlistJson, userId}){
 
     const [currentPlaylists, setCurrentPlaylists] = useState(playlistJson);
 
@@ -15,7 +15,7 @@ function PlaylistDisplay({playlistJson, access_token}){
             {currentPlaylists && 
                 currentPlaylists.items.map((playlist, index) => {
                     return (
-                        <PlaylistView index={index} playlist={playlist} key={index} access_token={access_token} />
+                        <PlaylistView index={index} playlist={playlist} key={index} userId={userId} />
                     )
                 })
             }

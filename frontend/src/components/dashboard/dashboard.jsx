@@ -4,10 +4,10 @@ import axios from 'axios';
 import './index.css';
 import PlaylistDisplay from '../playlistDisplay/playlistDisplay';
 
-const pingBackendPlaylists = async (access_token, setRequestStatus, setPlaylistJson) => {
+const pingBackendPlaylists = async (userId, setRequestStatus, setPlaylistJson) => {
     let endpoint = "/playlists";
     let params = new URLSearchParams();
-    params.append('access_token', access_token);
+    params.append('userId', userId);
     endpoint += '?' + params.toString();
     console.log('frontend endpoint var: ' + endpoint);
     let playlists = await axios.get(endpoint);
@@ -19,7 +19,7 @@ const pingBackendPlaylists = async (access_token, setRequestStatus, setPlaylistJ
 function Dashboard(){
     const search = useLocation().search;
     const params = new URLSearchParams(search);
-    const [access_token, setAccessToken] = useState(params.get("access_token"));
+    const [userId, setUserId] = useState(params.get("userId"));
     const [requestStatus, setRequestStatus] = useState(false);
     const [showPlaylistDisplay, setShowPlaylistDisplay] = useState(false);
     const [playlistJson, setPlaylistJson] = useState();
@@ -32,14 +32,13 @@ function Dashboard(){
         }
     }, [requestStatus])
     
-    const refresh_token = params.get("refresh_token");
     
 
     return(
         <div className="dashboard-wrapper">
             {!showPlaylistDisplay && <button  onClick={() => {
                 setRequestStatus(false); 
-                pingBackendPlaylists(access_token, setRequestStatus, setPlaylistJson);
+                pingBackendPlaylists(userId, setRequestStatus, setPlaylistJson);
                 }}
             > 
                 List your playlists
@@ -49,7 +48,7 @@ function Dashboard(){
                 <button onClick={()=> setShowPlaylistDisplay(!showPlaylistDisplay)}> &lt;- Return to dashboard</button>
              </div>
             }
-            {showPlaylistDisplay && <PlaylistDisplay playlistJson={playlistJson} access_token={access_token}/>}
+            {showPlaylistDisplay && <PlaylistDisplay playlistJson={playlistJson} userId={userId}/>}
         </div>
     )
 }
