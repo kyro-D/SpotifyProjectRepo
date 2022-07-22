@@ -5,7 +5,7 @@ Currently hosting project on Heroku.
 
 # How to Develop Locally
 
-First make sure the code is setup to be run locally and not for heroku deployment. All of the changes necessary for this can be seen in the following commit: [1b8010227983286ff99bf10c942c8bafdfd33025](https://github.com/kyro-D/SpotifyProjectRepo/commit/1b8010227983286ff99bf10c942c8bafdfd33025)
+First make sure the code is setup to be run locally and not for heroku deployment. All of the changes necessary for this can be seen in the following commit: [ef2866d3b411be473fab04e961c78584a3d6499b](https://github.com/kyro-D/SpotifyProjectRepo/commit/ef2866d3b411be473fab04e961c78584a3d6499b)
 
 Navigate to `/backend` and run `npm start`
 
