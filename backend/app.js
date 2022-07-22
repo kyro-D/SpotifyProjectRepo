@@ -12,7 +12,7 @@
  var cors = require('cors');
  var querystring = require('querystring');
  var cookieParser = require('cookie-parser');
-//  require('dotenv').config({path:".env"});
+ require('dotenv').config({path:".env"});
  var path = require('path');
  var port = process.env.PORT;
 
@@ -22,10 +22,10 @@ console.log(`port: ${port } host: ${host} `);
  
  var client_id = process.env.SpotifyClientId; // Your client id
  var client_secret = process.env.SpotifyClientSecret; // Your secret
-//  var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+ var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // redirect uri for heroku deployment
-var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback'; 
+// var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback'; 
 
  /**
   * Generates a random string containing numbers and letters
@@ -141,7 +141,7 @@ app.get('/callback', function(req, res) {
         //   );
         
         
-         res.redirect(`${host}/dashboard?`+
+         res.redirect(`http://${host}:${port}/dashboard?`+
             params
           );
        } else {
@@ -238,6 +238,7 @@ app.get('/callback', function(req, res) {
 
 // serve all other requests from react frontend
 app.get('/*', (req, res) => {
+  console.log('sending to the frontend')
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
  
