@@ -144,7 +144,9 @@ app.get("/callback", function (req, res) {
             res.redirect(`${host}/dashboard?` + params);
           } else {
             console.log("error occured when getting userId", error);
-            console.log(response);
+            console.log("response statusCode", response.statusCode);
+            console.log("response statusMessage", response.statusMessage);
+            console.log("response.body", response.body);
             res.redirect(host);
           }
         });
