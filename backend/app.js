@@ -20,8 +20,6 @@ var host = process.env.HOST;
 
 const userUtils = require("./userUtils");
 
-console.log(`port: ${port} host: ${host} `);
-
 var client_id = process.env.SpotifyClientId; // Your client id
 var client_secret = process.env.SpotifyClientSecret; // Your secret
 //  var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
@@ -117,12 +115,8 @@ app.get("/callback", function (req, res) {
       json: true,
     };
 
-    console.log("posting authOptions to get tokens");
-
     request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
-        console.log("it worked");
-
         var access_token = body.access_token,
           refresh_token = body.refresh_token;
 
@@ -134,18 +128,23 @@ app.get("/callback", function (req, res) {
 
         //  // use the access token to access the Spotify Web API
         request.get(options, function (error, response, body) {
-          let userId = body.id;
+          if (!error && response.statusCode === 200) {
+            console.log("success getting userId", body);
+            let userId = body.id;
 
-          var params = new URLSearchParams();
-          params.append("userId", userId);
-          // we can also pass the token to the browser to make requests from there
+            var params = new URLSearchParams();
+            params.append("userId", userId);
+            // we can also pass the token to the browser to make requests from there
 
-          //  res.redirect(`https://${host}/dashboard?`+
-          //     params
-          //   );
+            //  res.redirect(`https://${host}/dashboard?`+
+            //     params
+            //   );
 
-          userUtils.storeNewUser(userId, access_token);
-          res.redirect(`${host}/dashboard?` + params);
+            userUtils.storeNewUser(userId, access_token);
+            res.redirect(`${host}/dashboard?` + params);
+          } else {
+            console.log("error occured when getting userId", error);
+          }
         });
       } else {
         res.status(401).send(
@@ -191,10 +190,9 @@ app.get("/refresh_token", function (req, res) {
 //   });
 
 app.get("/playlists", (req, res) => {
-  console.log("getting playlists");
+  console.log("/playlists route");
   const userId = req.query.userId;
   const access_token = userUtils.getUserAccessToken(userId);
-  console.log("retrieved access token");
 
   var options = {
     url: `https://api.spotify.com/v1/users/${userId}/playlists`,
@@ -202,11 +200,9 @@ app.get("/playlists", (req, res) => {
     json: true,
   };
 
-  // console.log('this is the ACCESS_TOKEN: '+ access_token);
-
   request.get(options, function (error, response, body) {
     if (!error && response.statusCode === 200) {
-      console.log("got successful api call sending data");
+      console.log("got successful playlist api call sending data to frontend");
       res.send(body);
     } else {
       console.log("/playlists ran into an error");

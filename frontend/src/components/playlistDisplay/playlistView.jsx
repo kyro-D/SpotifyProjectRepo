@@ -11,7 +11,6 @@ const getPlaylistTracks = async (userId, url, setTracks) => {
   params.append("userId", userId);
   let gotAllTracks = false;
   let allTracks = [];
-  console.log("looping through tracks on client");
   while (!gotAllTracks) {
     params.set("url", url);
     let endpointFinal = endpoint + "?" + params.toString();
