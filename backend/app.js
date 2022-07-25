@@ -27,7 +27,7 @@ console.log(`port: ${port } host: ${host} `);
 //  var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // redirect uri for heroku deployment
-var redirect_uri = 'https://kdr-spotify-project.herokuapp.com/callback'; 
+var redirect_uri = 'https://kdr-spotify.herokuapp.com/callback'; 
 
  /**
   * Generates a random string containing numbers and letters
