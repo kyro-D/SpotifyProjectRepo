@@ -12,6 +12,7 @@
         "request": "^2.88.2"
     },
     "scripts": {
-        "start": "node app.js"
+        "start": "node app.js",
+        "start-local": "node app.js local-deployment"
       }
 }
