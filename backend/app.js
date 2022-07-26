@@ -147,7 +147,7 @@ app.get("/callback", function (req, res) {
             console.log("response statusCode", response.statusCode);
             console.log("response statusMessage", response.statusMessage);
             console.log("response.body", response.body);
-            res.redirect(host);
+            res.redirect(`${host}/error`);
           }
         });
       } else {
