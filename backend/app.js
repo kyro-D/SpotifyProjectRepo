@@ -12,20 +12,22 @@ var request = require("request"); // "Request" library
 var cors = require("cors");
 var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
-//  require('dotenv').config({path:".env"});
 var path = require("path");
-var port = process.env.PORT;
 
+// conditionally apply local .env if app is run locally
+const args = process.argv.slice(2);
+if (args[0] === "local-deployment") {
+  require("dotenv").config({ path: ".env" });
+}
+
+var port = process.env.PORT;
 var host = process.env.HOST;
 
 const userUtils = require("./userUtils");
 
 var client_id = process.env.SpotifyClientId; // Your client id
 var client_secret = process.env.SpotifyClientSecret; // Your secret
-//  var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
-
-// redirect uri for heroku deployment
-var redirect_uri = "https://kdr-spotify.herokuapp.com/callback";
+var redirect_uri = process.env.RedirectUri;
 
 /**
  * Generates a random string containing numbers and letters
@@ -134,11 +136,6 @@ app.get("/callback", function (req, res) {
 
             var params = new URLSearchParams();
             params.append("userId", userId);
-            // we can also pass the token to the browser to make requests from there
-
-            //  res.redirect(`https://${host}/dashboard?`+
-            //     params
-            //   );
 
             userUtils.storeNewUser(userId, access_token);
             res.redirect(`${host}/dashboard?` + params);
@@ -237,7 +234,6 @@ app.get("/playlist-tracks", (req, res) => {
   });
 });
 
-//  console.log('Listening on ' + port);
 app.listen(port);
 
 // serve all other requests from react frontend
