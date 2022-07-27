@@ -1,16 +1,36 @@
-var usersDict = {};
+var sessionDict = {};
+
+function storeNewSession(sessionId) {
+  sessionDict[sessionId] = { accessToken: "", userId: "" };
+}
 
 //userId is a string
-function storeNewUser(userId, accessToken) {
-  usersDict[userId] = accessToken;
+function storeNewUser(sessionId, userId, accessToken) {
+  sessionDict[sessionId] = { accessToken: accessToken, userId: userId };
 }
 
-function removeUser(userId) {
-  delete usersDict[userId];
+function removeUser(sessionId) {
+  delete sessionDict[sessionId];
 }
 
-function getUserAccessToken(userId) {
-  return usersDict[userId];
+function getUserAccessToken(sessionId) {
+  return sessionDict[sessionId]?.accessToken;
 }
 
-module.exports = { storeNewUser, removeUser, getUserAccessToken };
+function getUserId(sessionId) {
+  // TODO use helpper function isValidSession before and getter method
+  return sessionDict[sessionId]?.userId;
+}
+
+function isValidSession(sessionId) {
+  return Boolean(sessionDict[sessionId]);
+}
+
+module.exports = {
+  storeNewUser,
+  removeUser,
+  getUserAccessToken,
+  getUserId,
+  storeNewSession,
+  isValidSession,
+};
