@@ -1,8 +1,3 @@
-//Prisma utils for storing data
-const { PrismaClient } = require("@prisma/client");
-
-// const prisma = new PrismaClient();
-
 async function updateUser(prisma, userId, userData) {
   await prisma.user.update({
     where: {
