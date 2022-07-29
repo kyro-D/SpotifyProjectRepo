@@ -11,8 +11,10 @@ async function updateUser(prisma, userId, userData) {
 
 async function createUser(prisma, userId, userData) {
   await prisma.user.create({
-    id: userId,
-    ...userData,
+    data: {
+      id: userId,
+      ...userData,
+    },
   });
 }
 
