@@ -13,6 +13,9 @@ var session = require("express-session");
 var cors = require("cors");
 var querystring = require("querystring");
 var path = require("path");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+const { PrismaClient } = require("@prisma/client");
+const prismaUtils = require("./prismaUtils");
 
 // conditionally apply local .env if app is run locally
 const args = process.argv.slice(2);
@@ -28,23 +31,7 @@ var client_id = process.env.SpotifyClientId; // Your client id
 var client_secret = process.env.SpotifyClientSecret; // Your secret
 var redirect_uri = process.env.RedirectUri;
 
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
-var generateRandomString = function (length) {
-  var text = "";
-  var possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-
-var stateKey = "spotify_auth_state";
+var stateKey = "spotify_id";
 //todo ask SO why these are different.
 // var unsafeSecret1 = 'this is a test';
 // console.log('correct val ', Buffer.from(unsafeSecret1).toString('base64'));
@@ -56,9 +43,9 @@ var stateKey = "spotify_auth_state";
 // console.log(unsafeSecret1.toString('base64'));
 
 var app = express();
+const prisma = new PrismaClient();
 
 app.use(express.static(__dirname + "/public")).use(cors());
-// .use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "build")));
 //TODO add secret: true to cookie for production deployment
@@ -67,8 +54,13 @@ app.use(
     secret: session_secret,
     name: stateKey,
     cookie: { httpOnly: true, sameSite: "lax", maxAge: 600000 },
-    saveUninitialized: true,
-    resave: false,
+    saveUninitialized: false,
+    resave: true,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 5 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   })
 );
 
@@ -89,7 +81,7 @@ app.get("/login", function (req, res) {
   );
 });
 
-app.get("/callback", function (req, res) {
+app.get("/callback", async function (req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
 
@@ -108,7 +100,7 @@ app.get("/callback", function (req, res) {
     });
   } else {
     //regnerate the session as authentication status has changed
-    req.session.regenerate(function (error) {
+    req.session.regenerate(async function (error) {
       if (error) {
         console.log("error ", error);
         res.redirect(`${host}/error`);
@@ -131,12 +123,10 @@ app.get("/callback", function (req, res) {
           json: true,
         };
         // attempt to get authenticated tokens
-        request.post(authOptions, function (error, response, body) {
+        request.post(authOptions, async function (error, response, body) {
           if (!error && response.statusCode === 200) {
             var access_token = body.access_token,
               refresh_token = body.refresh_token;
-
-            req.session.accessToken = access_token;
 
             var options = {
               url: "https://api.spotify.com/v1/me",
@@ -145,11 +135,18 @@ app.get("/callback", function (req, res) {
             };
 
             // use the access token to access the user Id
-            request.get(options, function (error, response, body) {
+            request.get(options, async function (error, response, body) {
               if (!error && response.statusCode === 200) {
                 let userId = body.id;
 
                 req.session.userId = userId;
+                //store userID, and access token to the user table
+                await prismaUtils.handleUserLogin(prisma, userId, {
+                  country: body.country,
+                  name: body.display_name,
+                  accessToken: access_token,
+                  refreshToken: refresh_token,
+                });
 
                 res.redirect(`${host}/dashboard`);
               } else {
@@ -204,7 +201,7 @@ app.get("/refresh_token", function (req, res) {
   });
 });
 
-app.get("/playlists", (req, res) => {
+app.get("/playlists", async (req, res) => {
   console.log("/playlists route");
   const isSessionValid = req.session.status === "authenticated";
 
@@ -215,7 +212,7 @@ app.get("/playlists", (req, res) => {
     });
   } else {
     const userId = req.session.userId;
-    const accessToken = req.session.accessToken;
+    const accessToken = await prismaUtils.getUserAccessToken(prisma, userId);
 
     var options = {
       url: `https://api.spotify.com/v1/users/${userId}/playlists`,
@@ -238,7 +235,7 @@ app.get("/playlists", (req, res) => {
   }
 });
 
-app.get("/playlist-tracks", (req, res) => {
+app.get("/playlist-tracks", async (req, res) => {
   const isSessionValid = req.session.status === "authenticated";
 
   if (!isSessionValid) {
@@ -246,7 +243,8 @@ app.get("/playlist-tracks", (req, res) => {
       res.status(401).send("invalid session");
     });
   } else {
-    const accessToken = req.session.accessToken;
+    const userId = req.session.userId;
+    const accessToken = await prismaUtils.getUserAccessToken(prisma, userId);
     var url = req.query.url;
     var options = {
       url: url,
@@ -272,4 +270,12 @@ app.listen(port);
 app.get("/*", (req, res) => {
   console.log("sending to the frontend");
   res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
+// close db connection on application termination
+process.on("SIGTERM", async () => {
+  console.info("SIGTERM signal received.");
+  await session.Store.shutdown();
+  await prisma.$disconnect();
+  process.exit(0);
 });

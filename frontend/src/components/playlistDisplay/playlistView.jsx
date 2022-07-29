@@ -40,7 +40,6 @@ const getPlaylistTracks = async (url, setTracks, navigate) => {
 function PlaylistView({ index, playlist }) {
   const [showPlaylistDetails, setShowPlaylistDetails] = useState(false);
   const [playlistTracks, setPlaylistTracks] = useState(null);
-  const [error, setError] = useState(false);
 
   let navigate = useNavigate();
   useEffect(() => {
@@ -74,18 +73,19 @@ function PlaylistView({ index, playlist }) {
           </div>
           <div className="entry-detail-tracks">
             <div>Tracks: </div>
-            {playlistTracks.map((trackArr, index) => {
-              return trackArr.map((track, index) => {
-                trackCounter += 1;
+            {playlistTracks &&
+              playlistTracks.map((trackArr, index) => {
+                return trackArr.map((track, index) => {
+                  trackCounter += 1;
 
-                return (
-                  <div className="track-listing" key={index}>
-                    {" "}
-                    {trackCounter}. {track.track.name}{" "}
-                  </div>
-                );
-              });
-            })}
+                  return (
+                    <div className="track-listing" key={index}>
+                      {" "}
+                      {trackCounter}. {track.track.name}{" "}
+                    </div>
+                  );
+                });
+              })}
           </div>
         </div>
       )}
