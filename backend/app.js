@@ -53,7 +53,12 @@ app.use(
   session({
     secret: session_secret,
     name: stateKey,
-    cookie: { httpOnly: true, sameSite: "lax", maxAge: 600000 },
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 600000,
+      secure: `${args[0] === "local-deployment" ? false : true}`,
+    },
     saveUninitialized: false,
     resave: true,
     store: new PrismaSessionStore(prisma, {
