@@ -57,7 +57,7 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
       maxAge: 600000,
-      secure: `${args[0] === "local-deployment" ? false : true}`,
+      secure: `${args[0] === "local-deployment" ? "" : true}`,
     },
     saveUninitialized: false,
     resave: true,
