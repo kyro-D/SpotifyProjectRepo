@@ -48,7 +48,7 @@ const prisma = new PrismaClient();
 app.use(express.static(__dirname + "/public")).use(cors());
 
 app.use(express.static(path.join(__dirname, "build")));
-//TODO add secret: true to cookie for production deployment
+
 app.use(
   session({
     secret: session_secret,
@@ -59,6 +59,7 @@ app.use(
       maxAge: 600000,
       secure: `${args[0] === "local-deployment" ? "" : true}`,
     },
+    proxy: `${args[0] === "local-deployment" ? undefined : true}`,
     saveUninitialized: false,
     resave: true,
     store: new PrismaSessionStore(prisma, {
