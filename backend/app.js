@@ -21,6 +21,8 @@ const prismaUtils = require("./prismaUtils");
 const args = process.argv.slice(2);
 if (args[0] === "local-deployment") {
   require("dotenv").config({ path: ".env" });
+} else {
+  app.set("trust proxy", 1); // trust first proxy for using secure cookies
 }
 
 var port = process.env.PORT;
@@ -59,7 +61,6 @@ app.use(
       maxAge: 600000,
       secure: `${args[0] === "local-deployment" ? "" : true}`,
     },
-    proxy: `${args[0] === "local-deployment" ? undefined : true}`,
     saveUninitialized: false,
     resave: true,
     store: new PrismaSessionStore(prisma, {
