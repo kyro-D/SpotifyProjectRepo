@@ -3,18 +3,26 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
 import PlaylistDisplay from "../playlistDisplay/playlistDisplay";
+import { useNavigate } from "react-router-dom";
 
 const pingBackendPlaylists = async (
   userId,
   setRequestStatus,
-  setPlaylistJson
+  setPlaylistJson,
+  navigate
 ) => {
   let endpoint = "/playlists";
   let params = new URLSearchParams();
   params.append("userId", userId);
   endpoint += "?" + params.toString();
   console.log("frontend endpoint var: " + endpoint);
-  let playlists = await axios.get(endpoint);
+  let playlists = await axios.get(endpoint).catch((err) => {
+    console.error("error occured getting user playlists: ", err);
+    if (err.response.status === 401) {
+      //unauthorized error send user to error state
+      navigate("/error");
+    }
+  });
   //if there is error on backend, code after this won't get executed due to axios error handling (I think)
   setRequestStatus(true);
   setPlaylistJson(playlists.data);
@@ -27,6 +35,7 @@ function Dashboard() {
   const [requestStatus, setRequestStatus] = useState(false);
   const [showPlaylistDisplay, setShowPlaylistDisplay] = useState(false);
   const [playlistJson, setPlaylistJson] = useState();
+  let navigate = useNavigate();
 
   useEffect(() => {
     if (requestStatus) {
@@ -42,7 +51,12 @@ function Dashboard() {
         <button
           onClick={() => {
             setRequestStatus(false);
-            pingBackendPlaylists(userId, setRequestStatus, setPlaylistJson);
+            pingBackendPlaylists(
+              userId,
+              setRequestStatus,
+              setPlaylistJson,
+              navigate
+            );
           }}
         >
           List your playlists

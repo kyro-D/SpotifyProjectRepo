@@ -1,43 +1,50 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const handlePlaylistClick = (showPlaylistDetails, setShowPlaylistDetails) => {
   setShowPlaylistDetails(!showPlaylistDetails);
 };
 
-const getPlaylistTracks = async (userId, url, setTracks) => {
+const getPlaylistTracks = async (url, setTracks, navigate) => {
   let endpoint = "/playlist-tracks";
   let params = new URLSearchParams();
-  params.append("userId", userId);
   let gotAllTracks = false;
   let allTracks = [];
   while (!gotAllTracks) {
     params.set("url", url);
     let endpointFinal = endpoint + "?" + params.toString();
+    try {
+      let currentTracks = await axios.get(endpointFinal).catch((err) => {
+        console.log(err);
+      });
+      //if there is error on backend, code after this won't get executed due to axios error handling (I think)
+      allTracks.push(currentTracks.data.items);
 
-    let currentTracks = await axios.get(endpointFinal);
-    //if there is error on backend, code after this won't get executed due to axios error handling (I think)
-    allTracks.push(currentTracks.data.items);
-
-    if (currentTracks.data.next === null) {
-      gotAllTracks = true;
-    } else {
-      url = currentTracks.data.next;
+      if (currentTracks.data.next === null) {
+        gotAllTracks = true;
+      } else {
+        url = currentTracks.data.next;
+      }
+    } catch (error) {
+      console.error("error occured: ", error);
+      if (error.response.status === 401) {
+        navigate("/error");
+      }
     }
   }
 
   setTracks(allTracks);
 };
 
-function PlaylistView({ index, playlist, userId }) {
+function PlaylistView({ index, playlist }) {
   const [showPlaylistDetails, setShowPlaylistDetails] = useState(false);
   const [playlistTracks, setPlaylistTracks] = useState(null);
 
+  let navigate = useNavigate();
   useEffect(() => {
-    if (userId !== null) {
-      getPlaylistTracks(userId, playlist.tracks.href, setPlaylistTracks);
-    }
-  }, [userId, playlist.tracks.href]);
+    getPlaylistTracks(playlist.tracks.href, setPlaylistTracks, navigate);
+  }, [playlist.tracks.href]);
 
   let trackCounter = 0;
 
@@ -66,18 +73,19 @@ function PlaylistView({ index, playlist, userId }) {
           </div>
           <div className="entry-detail-tracks">
             <div>Tracks: </div>
-            {playlistTracks.map((trackArr, index) => {
-              return trackArr.map((track, index) => {
-                trackCounter += 1;
+            {playlistTracks &&
+              playlistTracks.map((trackArr, index) => {
+                return trackArr.map((track, index) => {
+                  trackCounter += 1;
 
-                return (
-                  <div className="track-listing" key={index}>
-                    {" "}
-                    {trackCounter}. {track.track.name}{" "}
-                  </div>
-                );
-              });
-            })}
+                  return (
+                    <div className="track-listing" key={index}>
+                      {" "}
+                      {trackCounter}. {track.track.name}{" "}
+                    </div>
+                  );
+                });
+              })}
           </div>
         </div>
       )}
